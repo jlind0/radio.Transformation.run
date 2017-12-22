@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div id="player"></div>
+<div id="PlayerView">
+    <div data-bind="with: CurrentSet">
+        <h3 data-bind="text:name"></h3>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
+    <script type="text/javascript" src="~/js/YoutubePlaylist.js"></script>
+}
