@@ -15,6 +15,8 @@ using Transformation.Run.Radio.Core;
 using Transformation.Run.Radio.Data.Core;
 using Transformation.Run.Radio.Data;
 using Microsoft.AspNetCore.Owin;
+using Google.Apis.YouTube.v3;
+using Google.Apis.Services;
 
 namespace trasformation.run.Radio
 {
@@ -39,6 +41,7 @@ namespace trasformation.run.Radio
                                                     .AllowAnyMethod()
                                                     .AllowAnyHeader());
             });
+            
             var songsToken = new CosmosDataToken(
                 new Uri(Configuration["CosmosDB:Path"]),
                 Configuration["CosmosDB:Key"],
@@ -63,8 +66,14 @@ namespace trasformation.run.Radio
                 config.For<CosmosDataToken>().Add(songsToken).Named("Songs");
                 config.For<IMusicAdapter>().Use<MusicAdapter>().
                     Ctor<CosmosDataToken>().IsNamedInstance("Songs");
+                config.For<YouTubeService>().Use(() => new YouTubeService(new BaseClientService.Initializer()
+                {
+                    ApiKey = Configuration["Google:DataKey"],
+                    ApplicationName = "radio-transformation-run"
+                }));
                 config.Populate(services);
             });
+            
             return container.GetInstance<IServiceProvider>();
         }
 

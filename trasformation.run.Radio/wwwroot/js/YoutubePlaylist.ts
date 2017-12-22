@@ -8,6 +8,7 @@ export function onYouTubeIframeAPIReady() : void{
 }
 export interface Song {
     id: string;
+    name: string;
     skip?: number;
     take?: number;
 }
@@ -15,12 +16,14 @@ export interface MusicSet {
     id: string;
     name: string;
     songs: Song[];
+    playedSongs?: KnockoutObservableArray<Song>;
 }
 export namespace radio.Transformation.run {
     export class PlayistPlayer{
         protected ExcludeList: string[] = [];
         protected Player: YT.Player;
         public CurrentSet: KnockoutObservable<MusicSet> = ko.observable();
+        public SetList: KnockoutObservableArray<MusicSet> = ko.observableArray();
         constructor(protected element: HTMLElement) {
             this.LoadNextSet();
             this.CurrentSet.subscribe(set => this.PlaySet());
@@ -36,10 +39,16 @@ export namespace radio.Transformation.run {
                 data: JSON.stringify(this.ExcludeList)
             }).then(s => {
                 var set = <MusicSet>s;
-                if (this.ExcludeList.length > 1)
+                if (this.ExcludeList.length > 3)
                     this.ExcludeList.shift();
                 this.ExcludeList.push(set.id);
-                this.CurrentSet(set);
+                var newSet: MusicSet = {
+                    id: set.id, name: set.name, songs: set.songs, playedSongs: ko.observableArray()
+                }
+                if (this.SetList().length > 5)
+                    this.SetList.shift();
+                this.SetList.push(newSet);
+                this.CurrentSet(newSet);
                 }).fail(err => console.error(err));
         }
         protected PlaySet() {
@@ -49,7 +58,7 @@ export namespace radio.Transformation.run {
                 var song = set.songs.shift();
                 if (this.Player != null)
                     this.Player.destroy();
-
+                set.playedSongs.push(song);
                 this.Player = new YT.Player(this.element, {
                     events: {
                         onStateChange: evt => {

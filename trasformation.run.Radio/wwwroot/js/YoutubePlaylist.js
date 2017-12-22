@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 ///<reference path="jquery.ts"/>
 ///<reference path="youtube.d.ts"/>
 ///<reference path="linq4js.ts"/>
@@ -21,6 +21,7 @@ var radio;
                     this.element = element;
                     this.ExcludeList = [];
                     this.CurrentSet = ko.observable();
+                    this.SetList = ko.observableArray();
                     this.LoadNextSet();
                     this.CurrentSet.subscribe(function (set) { return _this.PlaySet(); });
                 }
@@ -36,10 +37,16 @@ var radio;
                         data: JSON.stringify(this.ExcludeList)
                     }).then(function (s) {
                         var set = s;
-                        if (_this.ExcludeList.length > 1)
+                        if (_this.ExcludeList.length > 3)
                             _this.ExcludeList.shift();
                         _this.ExcludeList.push(set.id);
-                        _this.CurrentSet(set);
+                        var newSet = {
+                            id: set.id, name: set.name, songs: set.songs, playedSongs: ko.observableArray()
+                        };
+                        if (_this.SetList().length > 5)
+                            _this.SetList.shift();
+                        _this.SetList.push(newSet);
+                        _this.CurrentSet(newSet);
                     }).fail(function (err) { return console.error(err); });
                 };
                 PlayistPlayer.prototype.PlaySet = function () {
@@ -49,6 +56,7 @@ var radio;
                         var song = set.songs.shift();
                         if (this.Player != null)
                             this.Player.destroy();
+                        set.playedSongs.push(song);
                         this.Player = new YT.Player(this.element, {
                             events: {
                                 onStateChange: function (evt) {
@@ -79,3 +87,4 @@ var radio;
         })(run = Transformation.run || (Transformation.run = {}));
     })(Transformation = radio.Transformation || (radio.Transformation = {}));
 })(radio = exports.radio || (exports.radio = {}));
+//# sourceMappingURL=YoutubePlaylist.js.map

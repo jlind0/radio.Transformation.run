@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "trasformation.run.Radio", "trasformation.run.Radio\trasformation.run.Radio.csproj", "{E62C9F10-D736-44C9-955B-0983040585BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trasformation.run.Radio", "trasformation.run.Radio\trasformation.run.Radio.csproj", "{E62C9F10-D736-44C9-955B-0983040585BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformation.Run.Radio.Core", "Transformation.Run.Radio.Core\Transformation.Run.Radio.Core.csproj", "{6674E67E-7F32-44CF-9D6F-11E573FBCEBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformation.Run.Radio.Core", "Transformation.Run.Radio.Core\Transformation.Run.Radio.Core.csproj", "{6674E67E-7F32-44CF-9D6F-11E573FBCEBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformation.Run.Radio.Data", "Transformation.Run.Radio.Data\Transformation.Run.Radio.Data.csproj", "{82AB53E7-D82D-437B-B436-1DB2353C3C0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformation.Run.Radio.Data", "Transformation.Run.Radio.Data\Transformation.Run.Radio.Data.csproj", "{82AB53E7-D82D-437B-B436-1DB2353C3C0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformation.Run.Radio.Data.Core", "Transformation.Run.Radio.Data.Core\Transformation.Run.Radio.Data.Core.csproj", "{DD96C25D-D434-4E76-8F86-0A86BB750618}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformation.Run.Radio.Data.Core", "Transformation.Run.Radio.Data.Core\Transformation.Run.Radio.Data.Core.csproj", "{DD96C25D-D434-4E76-8F86-0A86BB750618}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetCore", "DotNetCore", "{7164896C-B398-4146-AAC7-FED0C9F7EEAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E62C9F10-D736-44C9-955B-0983040585BE} = {7164896C-B398-4146-AAC7-FED0C9F7EEAF}
+		{6674E67E-7F32-44CF-9D6F-11E573FBCEBC} = {7164896C-B398-4146-AAC7-FED0C9F7EEAF}
+		{82AB53E7-D82D-437B-B436-1DB2353C3C0B} = {7164896C-B398-4146-AAC7-FED0C9F7EEAF}
+		{DD96C25D-D434-4E76-8F86-0A86BB750618} = {7164896C-B398-4146-AAC7-FED0C9F7EEAF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {79437D3F-D5D8-4F47-BEC8-8D54D694533F}

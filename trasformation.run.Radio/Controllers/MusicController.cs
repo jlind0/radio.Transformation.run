@@ -8,7 +8,9 @@ using Transformation.Run.Radio.Core;
 using Transformation.Run.Radio.Data.Core;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
-
+using trasformation.run.Radio.Models;
+using Google.Apis.YouTube.v3.Data;
+using Google.Apis.YouTube.v3;
 namespace trasformation.run.Radio.Controllers
 {
     [Produces("application/json")]
@@ -16,15 +18,42 @@ namespace trasformation.run.Radio.Controllers
     public class MusicController : Controller
     {
         protected IMusicAdapter MusicAdapter { get; private set; }
-        public MusicController(IMusicAdapter musicAdapter)
+        protected YouTubeService YouTube { get; private set; }
+        public MusicController(IMusicAdapter musicAdapter, YouTubeService youTube)
         {
             this.MusicAdapter = musicAdapter;
+            this.YouTube = youTube;
         }
 
         [HttpPost("Next")]
-        public Task<MusicSet> GetNextSet([FromBody]string[] excludes, CancellationToken token = default(CancellationToken))
+        public async Task<MusicSetViewModel> GetNextSet([FromBody]string[] excludes, CancellationToken token = default(CancellationToken))
         {
-            return this.MusicAdapter.GetNextSet(excludes, token);
+            var set = await this.MusicAdapter.GetNextSet(excludes, token);
+            MusicSetViewModel msvm = new MusicSetViewModel()
+            {
+                id = set.id,
+                Name = set.Name
+            };
+            List<SongViewModel> svms = new List<SongViewModel>();
+            foreach (var song in set.Songs)
+            {
+                var request = this.YouTube.Videos.List("snippet");
+                request.Id = song.Id;
+                var response = await request.ExecuteAsync(token);
+                var video = response.Items.SingleOrDefault();
+                if(video != null)
+                {
+                    svms.Add(new SongViewModel()
+                    {
+                        Id = video.Id,
+                        Name = video.Snippet.Title,
+                        Skip = song.Skip,
+                        Take = song.Take
+                    });
+                }
+            }
+            msvm.Songs = svms.ToArray();
+            return msvm;
         }
         [HttpPost]
         [Authorize()]

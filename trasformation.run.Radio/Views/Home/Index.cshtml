@@ -1,11 +1,29 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<div id="player"></div>
 <div id="PlayerView">
     <div data-bind="with: CurrentSet">
         <h3 data-bind="text:name"></h3>
     </div>
+    <div>
+        <div style="float:left">
+            <div id="player"></div>
+        </div>
+        <div style="float:right">
+            <div data-bind="foreach: SetList">
+                <h4 data-bind="text: name"></h4>
+                <ul data-bind="foreach: playedSongs" class="list-unstyled">
+                    <li data-bind="text: name"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="clear:both">
+    <h4>What exactly is this?</h4>
+    <p>
+        radio.TransFORMation.run is a PaaS DJing system in the style of Bill Goldsmith of <a href="http://www.radioparadise.com">Radio Paradise</a>. It enables radio DJ's to define n-track sets and play them back to the use at random, since the theme is within the set not between them. The backend schema is endpoint agnostic, assuming that the song can be looked by an identifier. Optionally the intro or end of a song can be skipped in seconds. This particular implementation uses the YouTube API which has turned out to be surprisingly smooth (and apparently ad-free?). You are listening to <a href="http://www.linkedin.com/in/jasonlind0">Jason Lind</a>'s sets', multi-tenancy is a very interesting proposition and implementation will depend on interest. The full source can be found on <a href="https://github.com/jlind0/radio.Transformation.run">GitHub</a> and is under a true <a href="http://copyfree.org">Copy free</a> license.
+    </p>
 </div>
 @section Scripts{
     <script type="text/javascript">
