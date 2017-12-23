@@ -10,8 +10,9 @@ namespace Transformation.Run.Radio.Data.Core
 {
     public interface IMusicAdapter
     {
-        Task<MusicSet> GetNextSet(string[] excludeIds = null, CancellationToken token = default(CancellationToken));
+        Task<MusicSet> GetNextSet(string tenant,string[] excludeIds = null , CancellationToken token = default(CancellationToken));
         Task SaveMusicSet(MusicSet set, CancellationToken token = default(CancellationToken));
+        Task<MusicSet> GetSet(string id, CancellationToken token = default(CancellationToken));
     }
 
     public class CosmosDataToken

@@ -1,0 +1,24 @@
+{
+  "name": "commonjs-require",
+  "version": "1.4.5",
+  "description": "browser-side CommonJS require() function.",
+  "main": "node.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:efacilitation/commonjs-require.git"
+  },
+  "keywords": [
+    "commonjs",
+    "module",
+    "require",
+    "define"
+  ],
+  "author": {
+    "name": "efa GmbH",
+    "email": "team@efa-gmbh.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/efacilitation/commonjs-require/issues"
+  }
+}

@@ -17,6 +17,9 @@ using Transformation.Run.Radio.Data;
 using Microsoft.AspNetCore.Owin;
 using Google.Apis.YouTube.v3;
 using Google.Apis.Services;
+using trasformation.run.Radio.Exstensions;
+using Microsoft.AspNetCore.SignalR;
+using trasformation.run.Radio.Hubs;
 
 namespace trasformation.run.Radio
 {
@@ -34,6 +37,7 @@ namespace trasformation.run.Radio
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().AddControllersAsServices();
+            var signalR = services.AddSignalR();
             services.AddCors(options =>
             {
 
@@ -47,6 +51,11 @@ namespace trasformation.run.Radio
                 Configuration["CosmosDB:Key"],
                 Configuration["CosmosDB:Database"],
                 Configuration["CosmosDB:Collections:Songs"]);
+            var currentSetToken = new CosmosDataToken(
+                new Uri(Configuration["CosmosDB:Path"]),
+                Configuration["CosmosDB:Key"],
+                Configuration["CosmosDB:Database"],
+                Configuration["CosmosDB:Collections:CurrentSets"]);
             services.AddSwaggerGen(gen =>
             {
                 gen.CustomSchemaIds(x => x.FullName);
@@ -66,7 +75,11 @@ namespace trasformation.run.Radio
                 config.For<CosmosDataToken>().Add(songsToken).Named("Songs");
                 config.For<IMusicAdapter>().Use<MusicAdapter>().
                     Ctor<CosmosDataToken>().IsNamedInstance("Songs");
-                config.For<YouTubeService>().Use(() => new YouTubeService(new BaseClientService.Initializer()
+                config.For<CosmosDataToken>().Add(currentSetToken).Named("CurrentSet");
+                config.For<ICurrentSetAdapter>().Use<CurrentSetDataAdapter>().
+                    Ctor<CosmosDataToken>().IsNamedInstance("CurrentSet");
+                config.For<YouTubeService>().Use(() => new YouTubeService(
+                    new BaseClientService.Initializer()
                 {
                     ApiKey = Configuration["Google:DataKey"],
                     ApplicationName = "radio-transformation-run"
@@ -103,6 +116,10 @@ namespace trasformation.run.Radio
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<MusicHub>("hubs/music");
             });
         }
     }

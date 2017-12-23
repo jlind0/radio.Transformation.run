@@ -1,55 +1,80 @@
-﻿///<reference path="jquery.ts"/>
+﻿//NOTE: Because of a bug with the signalR Typescript defs there is a YoutubePlaylist_fixed.js
+//that must be updated with the const .... require line commented out
+///<reference path="jquery.ts"/>
 ///<reference path="youtube.d.ts"/>
 ///<reference path="linq4js.ts"/>
 ///<reference path="knockout.ts"/>
+import * as signalR from "../lib/signalr/index"
 export function onYouTubeIframeAPIReady() : void{
     var player = new radio.Transformation.run.PlayistPlayer($("#player").get(0));
     ko.applyBindings(player, $("#PlayerView").get(0));
 }
-export interface Song {
-    id: string;
-    name: string;
-    skip?: number;
-    take?: number;
-}
-export interface MusicSet {
-    id: string;
-    name: string;
-    songs: Song[];
-    playedSongs?: KnockoutObservableArray<Song>;
-}
-export namespace radio.Transformation.run {
+
+export module radio.Transformation.run {
+    export interface Song {
+        id: string;
+        name: string;
+        skip?: number;
+        take?: number;
+    }
+    export interface MusicSet {
+        id: string;
+        name: string;
+        songs: Song[];
+        playedSongs?: KnockoutObservableArray<Song>;
+    }
     export class PlayistPlayer{
-        protected ExcludeList: string[] = [];
         protected Player: YT.Player;
         public CurrentSet: KnockoutObservable<MusicSet> = ko.observable();
         public SetList: KnockoutObservableArray<MusicSet> = ko.observableArray();
+        public SetQueue: KnockoutObservableArray<MusicSet> = ko.observableArray();
+        protected Hub: signalR.HubConnection;
         constructor(protected element: HTMLElement) {
-            this.LoadNextSet();
             this.CurrentSet.subscribe(set => this.PlaySet());
+            this.Hub = new signalR.HubConnection("hubs/music");
+            this.Hub.on("queueSet", data => {
+                var set = <MusicSet>data;
+                //if (!this.SetQueue().Any(s => s.id == set.id) && this.CurrentSet().id != set.id)
+                this.SetQueue.push({
+                    id: set.id,
+                    name: set.name,
+                    songs: set.songs,
+                    playedSongs: ko.observableArray()
+                });
+
+            });
+            this.Hub.start().then(() => {
+                this.LoadNextSet();
+            })
+            
         }
         protected LoadNextSet() {
-            $.ajax({
-                type: "POST", dataType: "json",
-                url: "api/music/next",
-                headers: {
-                    "accept": "application/json",
-                    "content-type": "application/json"
-                },
-                data: JSON.stringify(this.ExcludeList)
-            }).then(s => {
-                var set = <MusicSet>s;
-                if (this.ExcludeList.length > 3)
-                    this.ExcludeList.shift();
-                this.ExcludeList.push(set.id);
-                var newSet: MusicSet = {
-                    id: set.id, name: set.name, songs: set.songs, playedSongs: ko.observableArray()
-                }
-                if (this.SetList().length > 5)
-                    this.SetList.shift();
-                this.SetList.push(newSet);
-                this.CurrentSet(newSet);
+            var currenId = null;
+            if (this.CurrentSet() != null)
+                currenId = this.CurrentSet().id;
+            if (this.SetQueue().length > 0)
+                this.CurrentSet(this.SetQueue.shift());
+            else {
+                $.ajax({
+                    type: "POST", dataType: "json",
+                    url: "api/music/next",
+                    headers: {
+                        "accept": "application/json",
+                        "content-type": "application/json"
+                    },
+                    data: JSON.stringify(currenId)
+                }).then(s => {
+                    var set = <MusicSet>s;
+                    var newSet: MusicSet = {
+                        id: set.id, name: set.name, songs: set.songs, playedSongs: ko.observableArray()
+                    }
+                    this.Hub.send("queueSet", set);
+                    if (this.SetList().length > 2)
+                        this.SetList.shift();
+                    this.SetList.push(newSet);
+                    this.CurrentSet(newSet);
                 }).fail(err => console.error(err));
+            }
         }
         protected PlaySet() {
             var set = this.CurrentSet();

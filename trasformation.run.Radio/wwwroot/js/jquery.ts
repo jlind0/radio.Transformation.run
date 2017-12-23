@@ -2957,7 +2957,6 @@ interface JQueryStatic<TElement extends Node = HTMLElement> {
      */
     when(...deferreds: any[]): JQuery.Promise<any, any, never>;
 }
-interface Iterable<TElement> { }
 interface JQuery<TElement extends Node = HTMLElement> extends Iterable<TElement> {
     /**
      * A string containing the jQuery version number.

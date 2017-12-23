@@ -17,7 +17,7 @@
     </environment>
 </head>
 <body>
-    
+
     <div class="container body-content">
         @RenderBody()
         <hr />
@@ -25,14 +25,17 @@
             <p>&copy; 2017 - radio.<a href="http://transformation.run">TransFORMation.run</a></p>
         </footer>
     </div>
-
+    
     <environment include="Development">
+       @*<script src="~/lib/system.js/dist/system.js"></script>*@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/linq4js//dist/linq4js.js"></script>
         <script src="~/lib/knockout/dist/knockout.debug.js"></script>
+        <script src="~/lib/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
     </environment>
     <environment exclude="Development">
+        @*<script src="~/lib/system.js/dist/system-production.js"></script>*@
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
@@ -47,8 +50,9 @@
         </script>
         <script src="~/lib/linq4js//dist/linq4js.min.js"></script>
         <script src="~/lib/knockout/dist/knockout.js"></script>
+        <script src="~/lib/signalr/signalr-client-1.0.0-alpha2-final.min.js"></script>
     </environment>
-    <script type="text/javascript">
+    <script>
         var exports = {};
     </script>
     @RenderSection("Scripts", required: false)

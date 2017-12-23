@@ -3,6 +3,9 @@
   "private": true,
   "dependencies": {
     "linq4js": "2.1.8",
-    "knockout": "v3.4.2"
+    "knockout": "v3.4.2",
+    "commonjs-require": "v1.4.5",
+    "dojo": "1.13.0",
+    "system.js": "0.20.19"
   }
 }

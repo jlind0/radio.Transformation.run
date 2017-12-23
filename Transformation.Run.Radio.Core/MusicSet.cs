@@ -9,6 +9,7 @@ namespace Transformation.Run.Radio.Core
         public string id { get; set; }
         public string Name { get; set; }
         public Song[] Songs { get; set; }
+        public string Tenant { get; set; }
     }
     public class Song
     {

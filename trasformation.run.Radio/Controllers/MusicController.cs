@@ -9,8 +9,10 @@ using Transformation.Run.Radio.Data.Core;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using trasformation.run.Radio.Models;
-using Google.Apis.YouTube.v3.Data;
 using Google.Apis.YouTube.v3;
+using Newtonsoft.Json;
+using trasformation.run.Radio.Exstensions;
+using System.Text;
 namespace trasformation.run.Radio.Controllers
 {
     [Produces("application/json")]
@@ -19,16 +21,54 @@ namespace trasformation.run.Radio.Controllers
     {
         protected IMusicAdapter MusicAdapter { get; private set; }
         protected YouTubeService YouTube { get; private set; }
-        public MusicController(IMusicAdapter musicAdapter, YouTubeService youTube)
+        protected ITopicClientFactory TopicFactory { get; private set; }
+        protected ICurrentSetAdapter CurrentSetAdapter { get; private set; }
+        public MusicController(IMusicAdapter musicAdapter, YouTubeService youTube, ICurrentSetAdapter currentSet)
         {
             this.MusicAdapter = musicAdapter;
             this.YouTube = youTube;
+            this.CurrentSetAdapter = currentSet;
         }
 
-        [HttpPost("Next")]
-        public async Task<MusicSetViewModel> GetNextSet([FromBody]string[] excludes, CancellationToken token = default(CancellationToken))
+        [HttpPost("Next/{tenant?}")]
+        public async Task<MusicSetViewModel> GetNextSet([FromBody]string musicSetId = null, string tenant = "jason", CancellationToken token = default(CancellationToken))
         {
-            var set = await this.MusicAdapter.GetNextSet(excludes, token);
+            var currentSet = await this.CurrentSetAdapter.GetCurrentSet(tenant, token);
+            MusicSet set = null;
+            if (currentSet == null || musicSetId == currentSet?.CurrentId)
+            {
+                Queue<string> excludes = new Queue<string>((currentSet == null ?
+                        new string[] { } :
+                           (currentSet.Excludes ?? (new string[] { }))));
+                if (currentSet != null)
+                    excludes.Enqueue(currentSet.CurrentId);
+                else if (musicSetId != null)
+                    excludes.Enqueue(musicSetId);
+                if (excludes.Count > 7)
+                    excludes.Dequeue();
+                set = await this.MusicAdapter.GetNextSet(tenant, excludes.ToArray(), token);
+            }
+            else
+                set = await this.MusicAdapter.GetSet(currentSet.CurrentId, token);
+
+            if (set.id != currentSet?.CurrentId)
+            {
+                var excludes = currentSet?.Excludes ?? new string[] { };
+                Queue<string> exQueue = new Queue<string>(excludes);
+                if (musicSetId != null)
+                    exQueue.Enqueue(musicSetId);
+                if (exQueue.Count > 7)
+                    exQueue.Dequeue();
+                CurrentSet newSet = new CurrentSet()
+                {
+                    CurrentId = set.id,
+                    Excludes = exQueue.ToArray(),
+                    id = currentSet?.id,
+                    Tenant = set.Tenant
+                };
+                await this.CurrentSetAdapter.SetCurrentSet(newSet, token);
+            }
+      
             MusicSetViewModel msvm = new MusicSetViewModel()
             {
                 id = set.id,
@@ -41,7 +81,7 @@ namespace trasformation.run.Radio.Controllers
                 request.Id = song.Id;
                 var response = await request.ExecuteAsync(token);
                 var video = response.Items.SingleOrDefault();
-                if(video != null)
+                if (video != null)
                 {
                     svms.Add(new SongViewModel()
                     {

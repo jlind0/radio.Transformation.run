@@ -1,0 +1,30 @@
+{
+  "name": "commonjs-require",
+  "description": "browser-side CommonJS require() function.",
+  "version": "1.4.5",
+  "keywords": [
+    "cjs",
+    "commonjs",
+    "module",
+    "require",
+    "define"
+  ],
+  "main": "commonjs-require.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "node.js"
+  ],
+  "homepage": "https://github.com/efacilitation/commonjs-require",
+  "_release": "1.4.5",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.4.5",
+    "commit": "7edd9531665de96761205baa562d8b79250ce9bd"
+  },
+  "_source": "https://github.com/efacilitation/commonjs-require.git",
+  "_target": "v1.4.5",
+  "_originalSource": "commonjs-require",
+  "_direct": true
+}
