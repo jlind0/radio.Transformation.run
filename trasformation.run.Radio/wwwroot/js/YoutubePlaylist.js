@@ -28,19 +28,20 @@ var radio;
                     this.Hub = new signalR.HubConnection("hubs/music");
                     this.Hub.on("queueSet", data => {
                         var set = data;
-                        //if (!this.SetQueue().Any(s => s.id == set.id) && this.CurrentSet().id != set.id)
-                        this.SetQueue.push({
-                            id: set.id,
-                            name: set.name,
-                            songs: set.songs,
-                            playedSongs: ko.observableArray()
-                        });
+                        if (!this.SetQueue().Any(s => s.id == set.id) && this.CurrentSet().id != set.id)
+                            this.SetQueue.push({
+                                id: set.id,
+                                name: set.name,
+                                songs: set.songs,
+                                tenant: set.tenant,
+                                playedSongs: ko.observableArray()
+                            });
                     });
                     this.Hub.start().then(() => {
-                        this.LoadNextSet();
+                        this.LoadNextSet(false);
                     });
                 }
-                LoadNextSet() {
+                LoadNextSet(push) {
                     var currenId = null;
                     if (this.CurrentSet() != null)
                         currenId = this.CurrentSet().id;
@@ -49,7 +50,7 @@ var radio;
                     else {
                         $.ajax({
                             type: "POST", dataType: "json",
-                            url: "api/music/next",
+                            url: "api/music/next/" + tenant,
                             headers: {
                                 "accept": "application/json",
                                 "content-type": "application/json"
@@ -58,9 +59,14 @@ var radio;
                         }).then(s => {
                             var set = s;
                             var newSet = {
-                                id: set.id, name: set.name, songs: set.songs, playedSongs: ko.observableArray()
+                                id: set.id,
+                                name: set.name,
+                                songs: set.songs,
+                                tenant: set.tenant,
+                                playedSongs: ko.observableArray()
                             };
-                            this.Hub.send("queueSet", set);
+                            if (push)
+                                this.Hub.send("queueSet", set);
                             if (this.SetList().length > 2)
                                 this.SetList.shift();
                             this.SetList.push(newSet);
@@ -97,7 +103,7 @@ var radio;
                         });
                     }
                     else
-                        this.LoadNextSet();
+                        this.LoadNextSet(true);
                 }
             }
             run.PlayistPlayer = PlayistPlayer;

@@ -10,9 +10,10 @@ namespace trasformation.run.Radio.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        [Route("{tenant?}")]
+        public IActionResult Index(string tenant = "jason")
         {
-            return View();
+            return View((object)tenant);
         }
         
         public IActionResult Error()
