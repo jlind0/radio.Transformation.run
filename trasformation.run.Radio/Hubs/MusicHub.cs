@@ -9,10 +9,13 @@ namespace trasformation.run.Radio.Hubs
 {
     public class MusicHub : Hub
     {
+        public Task Enlist(string tenant)
+        {
+            return this.Groups.AddAsync(this.Context.ConnectionId, tenant);
+        }
         public Task QueueSet(MusicSet set)
         {
-            return this.Clients.AllExcept( new string[]{
-            this.Context.ConnectionId }).InvokeAsync("queueSet", set);
+            return this.Clients.Group(set.Tenant).InvokeAsync("queueSet", set);
         }
     }
 }

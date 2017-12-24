@@ -31,8 +31,14 @@ export module radio.Transformation.run {
         public SetQueue: KnockoutObservableArray<MusicSet> = ko.observableArray();
         protected Hub: signalR.HubConnection;
         constructor(protected element: HTMLElement) {
-            this.CurrentSet.subscribe(set => this.PlaySet());
+            this.CurrentSet.subscribe(set => {
+                if (this.SetList().length > 2)
+                    this.SetList.shift();
+                this.SetList.push(set);
+                this.PlaySet();
+            });
             this.Hub = new signalR.HubConnection("hubs/music");
+            
             this.Hub.on("queueSet", data => {
                 var set = <MusicSet>data;
                 if (!this.SetQueue().Any(s => s.id == set.id) && this.CurrentSet().id != set.id)
@@ -46,7 +52,7 @@ export module radio.Transformation.run {
 
             });
             this.Hub.start().then(() => {
-                this.LoadNextSet(false);
+                this.Hub.send("enlist", tenant).then(() => this.LoadNextSet(false));
             })
             
         }
@@ -71,14 +77,12 @@ export module radio.Transformation.run {
                         id: set.id,
                         name: set.name,
                         songs: set.songs,
-                        tenant: set.tenant,
+                        tenant: tenant,
                         playedSongs: ko.observableArray()
                     }
                     if (push)
                         this.Hub.send("queueSet", set);
-                    if (this.SetList().length > 2)
-                        this.SetList.shift();
-                    this.SetList.push(newSet);
+                    
                     this.CurrentSet(newSet);
                 }).fail(err => console.error(err));
             }

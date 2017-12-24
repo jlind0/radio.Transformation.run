@@ -10,6 +10,7 @@ namespace trasformation.run.Radio.Models
         public string id { get; set; }
         public string Name { get; set; }
         public SongViewModel[] Songs { get; set; }
+        public string Tenant { get; set; }
     }
     public class SongViewModel
     {

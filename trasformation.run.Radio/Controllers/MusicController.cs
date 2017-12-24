@@ -72,7 +72,8 @@ namespace trasformation.run.Radio.Controllers
             MusicSetViewModel msvm = new MusicSetViewModel()
             {
                 id = set.id,
-                Name = set.Name
+                Name = set.Name,
+                Tenant = tenant
             };
             List<SongViewModel> svms = new List<SongViewModel>();
             foreach (var song in set.Songs)
