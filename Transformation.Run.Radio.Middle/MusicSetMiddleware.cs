@@ -13,13 +13,17 @@ namespace Transformation.Run.Radio.Middle
     {
         protected IMusicAdapter MusicAdapter { get; private set; }
         protected ICurrentSetAdapter CurrentSetAdapter { get; private set; }
-        public MusicSetMiddleware(IMusicAdapter adapter, ICurrentSetAdapter currentSet)
+        protected ITenantDataAdapter TenantAdapter { get; private set; }
+        public MusicSetMiddleware(IMusicAdapter adapter, ICurrentSetAdapter currentSet, ITenantDataAdapter tenant)
         {
             this.MusicAdapter = adapter;
             this.CurrentSetAdapter = currentSet;
+            this.TenantAdapter = tenant;
         }
         public async Task<MusicSet> GetNextSet(string tenant, string musicSetId = null, CancellationToken token = default(CancellationToken))
         {
+            var t = await this.TenantAdapter.GetTenant(tenant, token);
+            long count = t.SetCount /  2L;
             var currentSet = await this.CurrentSetAdapter.GetCurrentSet(tenant, token);
             MusicSet set = null;
             if (currentSet == null || musicSetId == currentSet?.CurrentId)
@@ -31,7 +35,7 @@ namespace Transformation.Run.Radio.Middle
                     excludes.Enqueue(currentSet.CurrentId);
                 else if (musicSetId != null)
                     excludes.Enqueue(musicSetId);
-                if (excludes.Count > 12)
+                if (excludes.Count > count)
                     excludes.Dequeue();
                 set = await this.MusicAdapter.GetNextSet(tenant, excludes.ToArray(), token);
             }
@@ -44,7 +48,7 @@ namespace Transformation.Run.Radio.Middle
                 Queue<string> exQueue = new Queue<string>(excludes);
                 if (musicSetId != null)
                     exQueue.Enqueue(musicSetId);
-                if (exQueue.Count > 12)
+                if (exQueue.Count > count)
                     exQueue.Dequeue();
                 CurrentSet newSet = new CurrentSet()
                 {

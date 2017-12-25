@@ -42,5 +42,10 @@ namespace Transformation.Run.Radio.Data
             });
             return tenants;
         }
+
+        public Task SaveTenant(Tenant tenant, CancellationToken token = default(CancellationToken))
+        {
+            return UseClient(client => client.UpsertDocumentAsync(this.DataPath, tenant));
+        }
     }
 }

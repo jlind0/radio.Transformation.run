@@ -14,7 +14,7 @@ namespace Transformation.Run.Radio.Data
     public class CurrentSetDataAdapter : CosmosDataAdapter, ICurrentSetAdapter
     {
         public CurrentSetDataAdapter(CosmosDataToken dataToken) : base(dataToken) { }
-
+        
         public async Task<CurrentSet> GetCurrentSet(string tenant, CancellationToken token = default(CancellationToken))
         {
             CurrentSet set = null;

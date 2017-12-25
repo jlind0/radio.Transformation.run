@@ -15,7 +15,6 @@ namespace Transformation.Run.Radio.Data
         public MusicAdapter(CosmosDataToken token) : base(token)
         {
         }
-
         public async Task<IEnumerable<MusicSet>> GetMusicSets(string tenantId, CancellationToken token = default(CancellationToken))
         {
             List<MusicSet> sets = new List<MusicSet>();

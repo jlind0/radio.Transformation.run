@@ -11,5 +11,6 @@ namespace Transformation.Run.Radio.Data.Core
     {
         Task<Tenant> GetTenant(string tenantId, CancellationToken token = default(CancellationToken));
         Task<IEnumerable<Tenant>> GetTenantsByClaims(string[] claims, CancellationToken token = default(CancellationToken));
+        Task SaveTenant(Tenant tenant, CancellationToken token = default(CancellationToken));
     }
 }

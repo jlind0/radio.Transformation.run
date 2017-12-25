@@ -11,5 +11,6 @@ namespace Transformation.Run.Radio.Core
         public string TenantId { get; set; }
         public string Html { get; set; }
         public string AdminRole { get; set; }
+        public long SetCount { get; set; }
     }
 }
