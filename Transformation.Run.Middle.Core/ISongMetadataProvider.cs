@@ -12,4 +12,8 @@ namespace Transformation.Run.Radio.Middle.Core
     { 
         Task<SongViewModel> PopulateMetadata(Song song, CancellationToken token = default(CancellationToken));
     }
+    public interface IMusicSetMetadataProvider
+    {
+        Task<MusicSetViewModel> PopulateMetadata(MusicSet set, CancellationToken token = default(CancellationToken));
+    }
 }

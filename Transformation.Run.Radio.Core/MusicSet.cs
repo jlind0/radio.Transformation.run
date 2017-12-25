@@ -16,5 +16,6 @@ namespace Transformation.Run.Radio.Core
         public string Id { get; set; }
         public int? Skip { get; set; }
         public int? Take { get; set; }
+        public string Provider { get; set; }
     }
 }

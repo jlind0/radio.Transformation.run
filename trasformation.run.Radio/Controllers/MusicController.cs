@@ -21,33 +21,19 @@ namespace trasformation.run.Radio.Controllers
     [Route("api/Music")]
     public class MusicController : Controller
     {
-        protected ISongMetadataProvider YouTube { get; private set; }
+        protected IMusicSetMetadataProvider MetaData { get; private set; }
         protected IMusicSetMiddleware MusicMiddle { get; private set; }
-        public MusicController(ISongMetadataProvider youTube, IMusicSetMiddleware middle)
+        public MusicController(IMusicSetMetadataProvider metaData, IMusicSetMiddleware middle)
         {
             this.MusicMiddle = middle;
-            this.YouTube = youTube;
+            this.MetaData = metaData;
         }
 
         [HttpPost("Next/{tenant?}")]
         public async Task<MusicSetViewModel> GetNextSet([FromBody]string musicSetId = null, string tenant = "jason", CancellationToken token = default(CancellationToken))
         {
             MusicSet set = await this.MusicMiddle.GetNextSet(tenant, musicSetId, token);
-            MusicSetViewModel msvm = new MusicSetViewModel()
-            {
-                id = set.id,
-                Name = set.Name,
-                Tenant = tenant
-            };
-            List<SongViewModel> svms = new List<SongViewModel>();
-            foreach (var song in set.Songs)
-            {
-                var svm = await this.YouTube.PopulateMetadata(song, token);
-                if (svm != null)
-                    svms.Add(svm);
-            }
-            msvm.Songs = svms.ToArray();
-            return msvm;
+            return await this.MetaData.PopulateMetadata(set, token);
         }
         //[HttpPost]
         //[Authorize()]

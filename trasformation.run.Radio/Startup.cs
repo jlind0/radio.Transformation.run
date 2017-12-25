@@ -87,8 +87,10 @@ namespace trasformation.run.Radio
                     ApplicationName = "radio-transformation-run"
                 }));
                 config.For<IMusicSetMiddleware>().Use<MusicSetMiddleware>();
-                config.For<ISongMetadataProvider>().Use<YouTubeMetadataProvider>(); //TODO: multi-provider
+                config.For<ISongMetadataProvider>().Use<YouTubeMetadataProvider>().Named("youTube");
+                config.For<IMusicSetMetadataProvider>().Use<MusicSetMetadataProvider>();
                 config.Populate(services);
+                config.For<IContainer>().Use(container);
             });
             
             return container.GetInstance<IServiceProvider>();

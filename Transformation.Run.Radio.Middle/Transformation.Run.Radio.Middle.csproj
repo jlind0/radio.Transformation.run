@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.32.0.1079" />
+    <PackageReference Include="StructureMap" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -31,7 +31,7 @@ namespace Transformation.Run.Radio.Middle
                     excludes.Enqueue(currentSet.CurrentId);
                 else if (musicSetId != null)
                     excludes.Enqueue(musicSetId);
-                if (excludes.Count > 7)
+                if (excludes.Count > 12)
                     excludes.Dequeue();
                 set = await this.MusicAdapter.GetNextSet(tenant, excludes.ToArray(), token);
             }
@@ -44,7 +44,7 @@ namespace Transformation.Run.Radio.Middle
                 Queue<string> exQueue = new Queue<string>(excludes);
                 if (musicSetId != null)
                     exQueue.Enqueue(musicSetId);
-                if (exQueue.Count > 7)
+                if (exQueue.Count > 12)
                     exQueue.Dequeue();
                 CurrentSet newSet = new CurrentSet()
                 {

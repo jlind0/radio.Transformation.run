@@ -18,6 +18,7 @@ namespace Transformation.Run.Radio.Core.Models
         public int? Skip { get; set; }
         public int? Take { get; set; }
         public string Name { get; set; }
+        public string Provider { get; set; }
     }
     public class UserViewModel
     {
