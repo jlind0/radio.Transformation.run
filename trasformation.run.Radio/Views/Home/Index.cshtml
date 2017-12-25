@@ -16,31 +16,75 @@
             </div>
         </div>
     </div>
+    <div style="clear:both"></div>
+    <div data-bind="with: ChatRoom">
+
+        <div data-bind="ifnot: IsReady">
+            <b>Name:</b><input type="text" data-bind="textInput: User.Name" /><a href="" class="col-lg-3 btn" data-bind="click:Login">Start Chat</a>
+        </div>
+        <div class="container" data-bind="if: IsReady">
+            <div class="row">
+                <div class="conversation-wrap col-lg-3" data-bind="foreach:LoggedInUsers">
+
+                    <div class="media conversation" >
+                        <div class="media-body">
+                            <h4 class="media-heading" data-bind="text:Name"></h4>
+                            <h5 data-bind="text: CurrentSet().name"></h5>
+                            <small data-bind="text: CurrentSong().name"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message-wrap col-lg-8">
+                    <div class="msg-wrap"  data-bind="foreach: Messages">
+
+                        <div class="media msg ">
+                            <div class="media-body">
+                                @*<small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>*@
+                                <div data-bind="with: User"><h5 class="media-heading" data-bind="text:name"></h5></div>
+                                <small class="col-lg-10" data-bind="text: Message"></small>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="send-wrap ">
+                        <input class="form-control send-message" type="text" placeholder="Write a reply..." data-bind="textInput: NewMessage" />
+
+                    </div>
+                    <div class="btn-panel">
+                        <a href="" class=" col-lg-4 text-right btn   send-message-btn pull-right" data-bind="click: SendMessage"><i class="fa fa-plus"></i> Send Message</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div style="clear:both">
-    <h4>What exactly is this?</h4>
-    <p>
-        radio.TransFORMation.run is a PaaS DJing system in the style of Bill Goldsmith of <a href="http://www.radioparadise.com">Radio Paradise</a>. It enables radio DJ's to define n-track sets and play them back in sync to the users at random, since the theme is within the set not between them. The backend schema is endpoint agnostic, assuming that the song can be looked by an identifier. Optionally the intro or end of a song can be skipped in seconds. This particular implementation uses the YouTube API which has turned out to be surprisingly smooth (and apparently ad-free?). You are listening to @Model's sets and this application is multi-tenant, although we currently do not advertise the tenants. The full source can be found on <a href="https://github.com/jlind0/radio.Transformation.run">GitHub</a> and is under a true <a href="http://copyfree.org">Copy free</a> license.
-    </p>
-    <p>This is the deployment diagram:</p>
-    <img src="~/images/TransformationRadioDeployment.jpg"/>
-    <br />
-    <b>Please Remember this is in alpha, expect it break... there is only about 6hrs of content on it right now.... 23 Dec 2017</b>
-</div>
-@section Scripts{
-    <script type="text/javascript" src="~/js/YoutubePlaylist_fixed.js"></script>
-    <script type="text/javascript">
+
+        <div style="clear:both">
+            <h4>What exactly is this?</h4>
+            <p>
+                radio.TransFORMation.run is a PaaS DJing system in the style of Bill Goldsmith of <a href="http://www.radioparadise.com">Radio Paradise</a>. It enables radio DJ's to define n-track sets and play them back in sync to the users at random, since the theme is within the set not between them. The backend schema is endpoint agnostic, assuming that the song can be looked by an identifier. Optionally the intro or end of a song can be skipped in seconds. This particular implementation uses the YouTube API which has turned out to be surprisingly smooth (and apparently ad-free?). You are listening to @Model's sets and this application is multi-tenant, although we currently do not advertise the tenants. The full source can be found on <a href="https://github.com/jlind0/radio.Transformation.run">GitHub</a> and is under a true <a href="http://copyfree.org">Copy free</a> license.
+            </p>
+            <p>This is the deployment diagram:</p>
+            <img src="~/images/TransformationRadioDeployment.jpg" />
+            <br />
+            <b>Please Remember this is in alpha, expect it break... there is only about 6hrs of content on it right now.... 23 Dec 2017</b>
+        </div>
+        @section Scripts{
+        <script type="text/javascript" src="~/js/YoutubePlaylist_fixed.js"></script>
+        <script type="text/javascript" src="~/js/ChatRoomViewModel.js"></script>
+        <script type="text/javascript">
         var tenant = '@Model';
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    </script>
-    @*<script type="text/javascript">
-        function onYouTubeIframeAPIReady() {
-            var player = new radio.Transformation.run.PlayistPlayer($("#player").get(0));
-            ko.applyBindings(player, $("#PlayerView").get(0));
-        }
-    </script>*@
+        </script>
+        @*<script type="text/javascript">
+            function onYouTubeIframeAPIReady() {
+                var player = new radio.Transformation.run.PlayistPlayer($("#player").get(0));
+                ko.applyBindings(player, $("#PlayerView").get(0));
+            }
+        </script>*@
 
-}
+        }
