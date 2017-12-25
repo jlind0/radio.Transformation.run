@@ -15,6 +15,21 @@ namespace Transformation.Run.Radio.Data
         public MusicAdapter(CosmosDataToken token) : base(token)
         {
         }
+
+        public async Task<IEnumerable<MusicSet>> GetMusicSets(string tenantId, CancellationToken token = default(CancellationToken))
+        {
+            List<MusicSet> sets = new List<MusicSet>();
+            await UseClient(async client =>
+            {
+                var query = CreateQuery<MusicSet>(client).Where(m => m.Tenant == tenantId).AsDocumentQuery();
+                while(query.HasMoreResults)
+                {
+                    sets.AddRange(await query.ExecuteNextAsync<MusicSet>(token));
+                }
+            });
+            return sets;
+        }
+
         public async Task<MusicSet> GetNextSet(string tenant, string[] excludeIds = null,  CancellationToken token = default(CancellationToken))
         {
             if (excludeIds?.Length == 0)

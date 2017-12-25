@@ -58,6 +58,11 @@ namespace trasformation.run.Radio
                 Configuration["CosmosDB:Key"],
                 Configuration["CosmosDB:Database"],
                 Configuration["CosmosDB:Collections:CurrentSets"]);
+            var tenantsToken = new CosmosDataToken(
+                new Uri(Configuration["CosmosDB:Path"]),
+                Configuration["CosmosDB:Key"],
+                Configuration["CosmosDB:Database"],
+                Configuration["CosmosDB:Collections:Tenants"]);
             services.AddSwaggerGen(gen =>
             {
                 gen.CustomSchemaIds(x => x.FullName);
@@ -80,6 +85,9 @@ namespace trasformation.run.Radio
                 config.For<CosmosDataToken>().Add(currentSetToken).Named("CurrentSet");
                 config.For<ICurrentSetAdapter>().Use<CurrentSetDataAdapter>().
                     Ctor<CosmosDataToken>().IsNamedInstance("CurrentSet");
+                config.For<CosmosDataToken>().Add(tenantsToken).Named("Tenants");
+                config.For<ITenantDataAdapter>().Use<TenantDataAdapter>().
+                    Ctor<CosmosDataToken>().Named("Tenants");
                 config.For<YouTubeService>().Use(() => new YouTubeService(
                     new BaseClientService.Initializer()
                 {
@@ -113,6 +121,7 @@ namespace trasformation.run.Radio
             app.UseStaticFiles();
             app.UseCors("AllowAll");
             app.UseSwagger();
+            app.UseAuthentication();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("v1/swagger.json", "Radio.Transformation.run API");

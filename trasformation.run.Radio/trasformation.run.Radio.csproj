@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\ChatRoomViewModel.ts" />
+    <Content Remove="wwwroot\js\MusicSetViewModel.ts" />
     <Content Remove="wwwroot\js\YoutubePlaylist.ts" />
   </ItemGroup>
 
@@ -36,6 +37,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="wwwroot\js\ChatRoomViewModel.ts" />
+    <TypeScriptCompile Include="wwwroot\js\MusicSetViewModel.ts" />
     <TypeScriptCompile Include="wwwroot\js\YoutubePlaylist.ts" />
   </ItemGroup>
 

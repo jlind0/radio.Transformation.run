@@ -1,0 +1,12 @@
+﻿@model trasformation.run.Radio.Models.TenantViewModel
+@{
+    ViewData["Title"] = "Tenant";
+}
+
+<h2>@Model.Tenant.DisplayName</h2>
+<ul class="list-unstyled">
+    @foreach(var set in Model.Sets)
+    {
+        <li>@Html.ActionLink(set.Name, "MusicSet", new { setId = set.id })</li>
+    }
+</ul>

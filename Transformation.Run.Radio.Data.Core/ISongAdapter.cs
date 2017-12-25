@@ -13,6 +13,7 @@ namespace Transformation.Run.Radio.Data.Core
         Task<MusicSet> GetNextSet(string tenant,string[] excludeIds = null , CancellationToken token = default(CancellationToken));
         Task SaveMusicSet(MusicSet set, CancellationToken token = default(CancellationToken));
         Task<MusicSet> GetSet(string id, CancellationToken token = default(CancellationToken));
+        Task<IEnumerable<MusicSet>> GetMusicSets(string tenantId, CancellationToken token = default(CancellationToken));
     }
 
     public class CosmosDataToken

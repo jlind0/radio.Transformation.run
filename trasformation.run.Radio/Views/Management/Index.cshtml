@@ -1,0 +1,14 @@
+﻿@model Transformation.Run.Radio.Core.Tenant[]
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<ul class="list-unstyled">
+    @foreach (var claim in Model)
+    {
+        <li>@Html.ActionLink(claim.DisplayName, "Tenant", new { tenantId = claim.TenantId }) </li>
+
+    }
+</ul>
+

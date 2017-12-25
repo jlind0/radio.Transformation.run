@@ -1,0 +1,35 @@
+﻿@model trasformation.run.Radio.Models.TenantMusicSet
+@{
+    ViewData["Title"] = "MusicSet";
+}
+<div id="MusicSetView">
+    <div class="form-group">
+        <label for="txtName">Name</label>
+        <input id="txtName" class="form-control" data-bind="textInput: Name" />
+    </div>
+    <a href="" class="btn" data-bind="click:AddSongSlot">Add Song</a>
+    <div data-bind="foreach: Songs">
+        <div class="form-group">
+            <label>Provider</label>
+            <select data-bind="value: Provider">
+                <option value="youTube">You Tube</option>
+                <option value="soundCloud">Sound Cloud</option>
+            </select>
+            <label>Id</label>
+            <input type="text" data-bind="textInput: Id" />
+            <label>Skip</label>
+            <input type="text" data-bind="textInput: Skip" />
+            <label>Take</label>
+            <input type="text" data-bind="textInput: Take" />
+        </div>
+    </div>
+    <a href="" class="btn" data-bind="click:SaveSet">Save</a>
+</div>
+@section Scripts{ 
+    <script type="text/javascript">
+        var setId = '@Model.SetId';
+        var tenantId = '@Model.TenantId';
+    </script>
+    <script type="text/javascript" src="~/js/MusicSetViewModel.js"></script>
+}
+

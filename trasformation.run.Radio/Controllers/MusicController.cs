@@ -23,10 +23,12 @@ namespace trasformation.run.Radio.Controllers
     {
         protected IMusicSetMetadataProvider MetaData { get; private set; }
         protected IMusicSetMiddleware MusicMiddle { get; private set; }
-        public MusicController(IMusicSetMetadataProvider metaData, IMusicSetMiddleware middle)
+        protected IMusicAdapter MusicAdapter { get; private set; }
+        public MusicController(IMusicSetMetadataProvider metaData, IMusicSetMiddleware middle, IMusicAdapter musicAdapter)
         {
             this.MusicMiddle = middle;
             this.MetaData = metaData;
+            this.MusicAdapter = musicAdapter;
         }
 
         [HttpPost("Next/{tenant?}")]
@@ -35,11 +37,19 @@ namespace trasformation.run.Radio.Controllers
             MusicSet set = await this.MusicMiddle.GetNextSet(tenant, musicSetId, token);
             return await this.MetaData.PopulateMetadata(set, token);
         }
-        //[HttpPost]
-        //[Authorize()]
-        //public Task SaveSet([FromBody]MusicSet set, CancellationToken token = default(CancellationToken))
-        //{
-        //    return this.MusicAdapter.SaveMusicSet(set, token);
-        //}
+        [HttpPost]
+        [Authorize()]
+        public Task SaveSet([FromBody]MusicSet set, CancellationToken token = default(CancellationToken))
+        {
+            if (this.User.HasClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", $"tenant:{set.Tenant}"))
+                return this.MusicAdapter.SaveMusicSet(set, token);
+            else throw new InvalidOperationException("User not authorized for tenant");
+        }
+        [HttpGet("{setId}")]
+        public async Task<MusicSetViewModel> GetSet(string setId, CancellationToken token = default(CancellationToken))
+        {
+            var set = await this.MusicAdapter.GetSet(setId, token);
+            return await this.MetaData.PopulateMetadata(set, token);
+        }
     }
 }

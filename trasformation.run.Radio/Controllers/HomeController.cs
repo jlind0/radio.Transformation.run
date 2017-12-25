@@ -5,15 +5,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using trasformation.run.Radio.Models;
+using Transformation.Run.Radio.Core;
+using Transformation.Run.Radio.Data.Core;
+using System.Threading;
 
 namespace trasformation.run.Radio.Controllers
 {
     public class HomeController : Controller
     {
-        [Route("{tenant?}")]
-        public IActionResult Index(string tenant = "jason")
+        protected ITenantDataAdapter TenantAdapter { get; private set; }
+        public HomeController(ITenantDataAdapter tenantAdapter)
         {
-            return View((object)tenant);
+            this.TenantAdapter = tenantAdapter;
+        }
+        [Route("{tenant?}")]
+        public async Task<IActionResult> Index(string tenant = "jason", CancellationToken token = default(CancellationToken))
+        {
+            return View(await this.TenantAdapter.GetTenant(tenant, token));
         }
         
         public IActionResult Error()
