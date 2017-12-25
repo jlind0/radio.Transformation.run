@@ -29,6 +29,7 @@ export class ChatViewModel {
     public LoggedInUsers: KnockoutObservableArray<UserViewModel> = ko.observableArray();
     public Messages: KnockoutObservableArray<Message> = ko.observableArray();
     public NewMessage: KnockoutObservable<string> = ko.observable();
+    public IsUnloading: KnockoutObservable<boolean> = ko.observable();
     constructor(protected player: PlayistPlayer, protected id: string) {
         this.User = {
             Id: id,
@@ -37,7 +38,15 @@ export class ChatViewModel {
             CurrentSet: ko.observable(player.CurrentSet()),
             CurrentSong: ko.observable()
         }
-        
+        $(window).bind("beforeunload", () => {
+            if (!this.IsUnloading()) {
+                player.Hub.send("logout", this.GetUserDTO()).then(() => window.close());
+                this.IsUnloading(true);
+                return false;
+            }
+            else
+                return true;
+        })
         player.CurrentSet.subscribe(set => {
             this.User.CurrentSet(set);
             set.playedSongs.subscribe(song => this.User.CurrentSong(song.LastOrDefault()));

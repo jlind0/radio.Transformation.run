@@ -8,6 +8,7 @@ class ChatViewModel {
         this.LoggedInUsers = ko.observableArray();
         this.Messages = ko.observableArray();
         this.NewMessage = ko.observable();
+        this.IsUnloading = ko.observable();
         this.User = {
             Id: id,
             Tenant: tenant,
@@ -15,6 +16,15 @@ class ChatViewModel {
             CurrentSet: ko.observable(player.CurrentSet()),
             CurrentSong: ko.observable()
         };
+        $(window).bind("beforeunload", () => {
+            if (!this.IsUnloading()) {
+                player.Hub.send("logout", this.GetUserDTO()).then(() => window.close());
+                this.IsUnloading(true);
+                return false;
+            }
+            else
+                return true;
+        });
         player.CurrentSet.subscribe(set => {
             this.User.CurrentSet(set);
             set.playedSongs.subscribe(song => this.User.CurrentSong(song.LastOrDefault()));
