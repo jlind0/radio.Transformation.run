@@ -113,11 +113,9 @@ class PlayistPlayer {
                 });
                 widget.bind(SC.Widget.Events.READY, () => {
                     widget.play();
-                    widget.bind(SC.Widget.Events.PLAY, () => {
-                        widget.getCurrentSound(sound => {
-                            song.name = sound.user.username + ' - ' + sound.title;
-                            set.playedSongs.push(song);
-                        });
+                    widget.getCurrentSound(sound => {
+                        song.name = sound.user.username + ' - ' + sound.title;
+                        set.playedSongs.push(song);
                     });
                     widget.bind(SC.Widget.Events.FINISH, () => this.PlaySet());
                 });
