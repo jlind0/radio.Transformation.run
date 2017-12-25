@@ -7,6 +7,7 @@
 <ul class="list-unstyled">
     @foreach(var set in Model.Sets)
     {
-        <li>@Html.ActionLink(set.Name, "MusicSet", new { setId = set.id })</li>
+        <li>@Html.ActionLink(set.Name, "MusicSet", new { tenantId = set.Tenant, setId = set.id })</li>
     }
 </ul>
+@Html.ActionLink("New Set", "MusicSet", new { tenantId = Model.Tenant.TenantId})

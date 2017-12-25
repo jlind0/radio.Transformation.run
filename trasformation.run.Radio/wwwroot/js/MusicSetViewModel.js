@@ -16,6 +16,8 @@ class MusicSetViewModel {
         this.MusicSet = ko.observable();
         this.Songs = ko.observableArray();
         this.Name = ko.observable();
+        if (this.setId === "")
+            this.setId = null;
         this.MusicSet.subscribe(set => {
             this.Songs.removeAll();
             set.songs.ForEach(song => {
@@ -29,7 +31,7 @@ class MusicSetViewModel {
             });
             this.Name(set.name);
         });
-        if (setId != null)
+        if (this.setId != null)
             this.LoadSet();
         else {
             this.MusicSet({

@@ -25,7 +25,10 @@ export class MusicSetViewModel {
     public Songs: KnockoutObservableArray<SongViewModel> = ko.observableArray();
     public Name: KnockoutObservable<string> = ko.observable();
     constructor(protected tenantId : string, protected setId?: string) {
+        if (this.setId === "")
+            this.setId = null;
         this.MusicSet.subscribe(set => {
+            
             this.Songs.removeAll();
             set.songs.ForEach(song => {
                 var s: SongViewModel = {
@@ -38,7 +41,7 @@ export class MusicSetViewModel {
             });
             this.Name(set.name);
         });
-        if (setId != null)
+        if (this.setId != null)
             this.LoadSet();
         else {
             this.MusicSet({
