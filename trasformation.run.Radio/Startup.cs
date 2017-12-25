@@ -89,6 +89,7 @@ namespace trasformation.run.Radio
                 config.For<IMusicSetMiddleware>().Use<MusicSetMiddleware>();
                 config.For<ISongMetadataProvider>().Use<YouTubeMetadataProvider>().Named("youTube");
                 config.For<IMusicSetMetadataProvider>().Use<MusicSetMetadataProvider>();
+                config.For<ISongMetadataProvider>().Use<SoundCloudMetaDataProvider>().Named("soundCloud");
                 config.Populate(services);
                 config.For<IContainer>().Use(container);
             });

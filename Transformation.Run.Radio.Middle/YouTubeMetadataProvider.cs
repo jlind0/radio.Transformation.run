@@ -30,7 +30,8 @@ namespace Transformation.Run.Radio.Middle
                     Id = video.Id,
                     Name = video.Snippet.Title,
                     Skip = song.Skip,
-                    Take = song.Take
+                    Take = song.Take,
+                    Provider = song.Provider
                 };
             return null;
         }

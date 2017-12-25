@@ -80,7 +80,8 @@ export class ChatViewModel {
                     }),
                     CurrentSong: ko.observable({
                         id: s.id,
-                        name: s.name
+                        name: s.name,
+                        provider: s.provider
                     }),
                     Name: ko.observable(u.name),
                     Tenant: u.tenant
@@ -96,7 +97,8 @@ export class ChatViewModel {
                 });
                 uvm.CurrentSong({
                     id: s.id,
-                    name: s.name
+                    name: s.name,
+                    provider: s.provider
                 });
             }
         });
@@ -104,7 +106,8 @@ export class ChatViewModel {
             var u = <UserDTO>user;
             var cs: Song = {
                 id: null,
-                name: ""
+                name: "",
+                provider: null
             };
             var ss: MusicSet = {
                 id: null,
@@ -168,7 +171,8 @@ export class ChatViewModel {
         var song = this.User.CurrentSet().playedSongs().LastOrDefault();
         return {
             id: song.id,
-            name: song.name
+            name: song.name,
+            provider: song.provider
         };
     }
     public Login(): void {

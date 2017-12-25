@@ -57,7 +57,8 @@ class ChatViewModel {
                     }),
                     CurrentSong: ko.observable({
                         id: s.id,
-                        name: s.name
+                        name: s.name,
+                        provider: s.provider
                     }),
                     Name: ko.observable(u.name),
                     Tenant: u.tenant
@@ -73,7 +74,8 @@ class ChatViewModel {
                 });
                 uvm.CurrentSong({
                     id: s.id,
-                    name: s.name
+                    name: s.name,
+                    provider: s.provider
                 });
             }
         });
@@ -81,7 +83,8 @@ class ChatViewModel {
             var u = user;
             var cs = {
                 id: null,
-                name: ""
+                name: "",
+                provider: null
             };
             var ss = {
                 id: null,
@@ -145,7 +148,8 @@ class ChatViewModel {
         var song = this.User.CurrentSet().playedSongs().LastOrDefault();
         return {
             id: song.id,
-            name: song.name
+            name: song.name,
+            provider: song.provider
         };
     }
     Login() {
