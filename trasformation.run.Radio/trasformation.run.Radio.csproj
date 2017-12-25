@@ -27,9 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Transformation.Run.Middle.Core\Transformation.Run.Radio.Middle.Core.csproj" />
     <ProjectReference Include="..\Transformation.Run.Radio.Core\Transformation.Run.Radio.Core.csproj" />
     <ProjectReference Include="..\Transformation.Run.Radio.Data.Core\Transformation.Run.Radio.Data.Core.csproj" />
     <ProjectReference Include="..\Transformation.Run.Radio.Data\Transformation.Run.Radio.Data.csproj" />
+    <ProjectReference Include="..\Transformation.Run.Radio.Middle\Transformation.Run.Radio.Middle.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,62 +13,26 @@ using Google.Apis.YouTube.v3;
 using Newtonsoft.Json;
 using trasformation.run.Radio.Exstensions;
 using System.Text;
+using Transformation.Run.Radio.Core.Models;
+using Transformation.Run.Radio.Middle.Core;
 namespace trasformation.run.Radio.Controllers
 {
     [Produces("application/json")]
     [Route("api/Music")]
     public class MusicController : Controller
     {
-        protected IMusicAdapter MusicAdapter { get; private set; }
-        protected YouTubeService YouTube { get; private set; }
-        protected ITopicClientFactory TopicFactory { get; private set; }
-        protected ICurrentSetAdapter CurrentSetAdapter { get; private set; }
-        public MusicController(IMusicAdapter musicAdapter, YouTubeService youTube, ICurrentSetAdapter currentSet)
+        protected ISongMetadataProvider YouTube { get; private set; }
+        protected IMusicSetMiddleware MusicMiddle { get; private set; }
+        public MusicController(ISongMetadataProvider youTube, IMusicSetMiddleware middle)
         {
-            this.MusicAdapter = musicAdapter;
+            this.MusicMiddle = middle;
             this.YouTube = youTube;
-            this.CurrentSetAdapter = currentSet;
         }
 
         [HttpPost("Next/{tenant?}")]
         public async Task<MusicSetViewModel> GetNextSet([FromBody]string musicSetId = null, string tenant = "jason", CancellationToken token = default(CancellationToken))
         {
-            var currentSet = await this.CurrentSetAdapter.GetCurrentSet(tenant, token);
-            MusicSet set = null;
-            if (currentSet == null || musicSetId == currentSet?.CurrentId)
-            {
-                Queue<string> excludes = new Queue<string>((currentSet == null ?
-                        new string[] { } :
-                           (currentSet.Excludes ?? (new string[] { }))));
-                if (currentSet != null)
-                    excludes.Enqueue(currentSet.CurrentId);
-                else if (musicSetId != null)
-                    excludes.Enqueue(musicSetId);
-                if (excludes.Count > 7)
-                    excludes.Dequeue();
-                set = await this.MusicAdapter.GetNextSet(tenant, excludes.ToArray(), token);
-            }
-            else
-                set = await this.MusicAdapter.GetSet(currentSet.CurrentId, token);
-
-            if (set.id != currentSet?.CurrentId)
-            {
-                var excludes = currentSet?.Excludes ?? new string[] { };
-                Queue<string> exQueue = new Queue<string>(excludes);
-                if (musicSetId != null)
-                    exQueue.Enqueue(musicSetId);
-                if (exQueue.Count > 7)
-                    exQueue.Dequeue();
-                CurrentSet newSet = new CurrentSet()
-                {
-                    CurrentId = set.id,
-                    Excludes = exQueue.ToArray(),
-                    id = currentSet?.id,
-                    Tenant = set.Tenant
-                };
-                await this.CurrentSetAdapter.SetCurrentSet(newSet, token);
-            }
-      
+            MusicSet set = await this.MusicMiddle.GetNextSet(tenant, musicSetId, token);
             MusicSetViewModel msvm = new MusicSetViewModel()
             {
                 id = set.id,
@@ -78,29 +42,18 @@ namespace trasformation.run.Radio.Controllers
             List<SongViewModel> svms = new List<SongViewModel>();
             foreach (var song in set.Songs)
             {
-                var request = this.YouTube.Videos.List("snippet");
-                request.Id = song.Id;
-                var response = await request.ExecuteAsync(token);
-                var video = response.Items.SingleOrDefault();
-                if (video != null)
-                {
-                    svms.Add(new SongViewModel()
-                    {
-                        Id = video.Id,
-                        Name = video.Snippet.Title,
-                        Skip = song.Skip,
-                        Take = song.Take
-                    });
-                }
+                var svm = await this.YouTube.PopulateMetadata(song, token);
+                if (svm != null)
+                    svms.Add(svm);
             }
             msvm.Songs = svms.ToArray();
             return msvm;
         }
-        [HttpPost]
-        [Authorize()]
-        public Task SaveSet([FromBody]MusicSet set, CancellationToken token = default(CancellationToken))
-        {
-            return this.MusicAdapter.SaveMusicSet(set, token);
-        }
+        //[HttpPost]
+        //[Authorize()]
+        //public Task SaveSet([FromBody]MusicSet set, CancellationToken token = default(CancellationToken))
+        //{
+        //    return this.MusicAdapter.SaveMusicSet(set, token);
+        //}
     }
 }

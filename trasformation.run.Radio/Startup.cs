@@ -20,6 +20,8 @@ using Google.Apis.Services;
 using trasformation.run.Radio.Exstensions;
 using Microsoft.AspNetCore.SignalR;
 using trasformation.run.Radio.Hubs;
+using Transformation.Run.Radio.Middle;
+using Transformation.Run.Radio.Middle.Core;
 
 namespace trasformation.run.Radio
 {
@@ -84,6 +86,8 @@ namespace trasformation.run.Radio
                     ApiKey = Configuration["Google:DataKey"],
                     ApplicationName = "radio-transformation-run"
                 }));
+                config.For<IMusicSetMiddleware>().Use<MusicSetMiddleware>();
+                config.For<ISongMetadataProvider>().Use<YouTubeMetadataProvider>(); //TODO: multi-provider
                 config.Populate(services);
             });
             

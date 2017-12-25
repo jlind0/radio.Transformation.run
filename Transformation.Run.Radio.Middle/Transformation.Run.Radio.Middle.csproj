@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.32.0.1079" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transformation.Run.Middle.Core\Transformation.Run.Radio.Middle.Core.csproj" />
+    <ProjectReference Include="..\Transformation.Run.Radio.Core\Transformation.Run.Radio.Core.csproj" />
+    <ProjectReference Include="..\Transformation.Run.Radio.Data.Core\Transformation.Run.Radio.Data.Core.csproj" />
+  </ItemGroup>
+
+</Project>

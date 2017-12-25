@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace trasformation.run.Radio.Models
+namespace Transformation.Run.Radio.Core.Models
 {
     public class MusicSetViewModel
     {
@@ -18,5 +18,11 @@ namespace trasformation.run.Radio.Models
         public int? Skip { get; set; }
         public int? Take { get; set; }
         public string Name { get; set; }
+    }
+    public class UserViewModel
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public string Tenant { get; set; }
     }
 }

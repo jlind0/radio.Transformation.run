@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Transformation.Run.Radio.Middle.Core</AssemblyName>
+    <RootNamespace>Transformation.Run.Radio.Middle.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transformation.Run.Radio.Core\Transformation.Run.Radio.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -4,16 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Transformation.Run.Radio.Core;
-using trasformation.run.Radio.Models;
+using Transformation.Run.Radio.Core.Models;
 
 namespace trasformation.run.Radio.Hubs
 {
-    public class UserViewModel
-    {
-        public string Name { get; set; }
-        public string Id { get; set; }
-        public string Tenant { get; set; }
-    }
+    
     public class MusicHub : Hub
     {
         public Task GetConnectionId()
