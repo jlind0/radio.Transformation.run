@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 ///<reference path="youtube.d.ts"/>
 ///<reference path="linq4js.ts"/>
 ///<reference path="knockout.ts"/>
+//const signalR = require("../lib/signalr/index");
+//const ChatRoomViewModel_1 = require("./ChatRoomViewModel");
 function onYouTubeIframeAPIReady() {
     var player = new PlayistPlayer($("#player").get(0));
     ko.applyBindings(player, $("#PlayerView").get(0));
@@ -19,6 +21,7 @@ class PlayistPlayer {
         this.SetQueue = ko.observableArray();
         this.ChatRoom = ko.observable();
         this.IsYouTube = ko.observable(true);
+        this.AspectRatio = 390.0 / 640.0;
         this.CurrentSet.subscribe(set => {
             if (this.SetList().length > 2)
                 this.SetList.shift();
@@ -26,6 +29,13 @@ class PlayistPlayer {
             this.PlaySet();
         });
         this.Hub = new signalR.HubConnection("hubs/music");
+        $(window).resize(() => {
+            if (this.YouTubePlayer != null) {
+                var width = Math.floor($(window).width() * 0.35);
+                var height = Math.floor(width * this.AspectRatio);
+                this.YouTubePlayer.setSize(width, height);
+            }
+        });
         this.Hub.on("queueSet", data => {
             var set = data;
             if (!this.SetQueue().Any(s => s.id == set.id) && this.CurrentSet().id != set.id)
@@ -78,6 +88,8 @@ class PlayistPlayer {
             var song = set.songs.shift();
             if (this.YouTubePlayer != null)
                 this.YouTubePlayer.destroy();
+            var width = Math.floor($(window).width() * 0.35);
+            var height = Math.floor(width * this.AspectRatio);
             if (song.provider === "youTube") {
                 this.IsYouTube(true);
                 this.YouTubePlayer = new YT.Player(this.element, {
@@ -97,8 +109,8 @@ class PlayistPlayer {
                         start: song.skip,
                         end: song.take
                     },
-                    height: 390,
-                    width: 640,
+                    height: height,
+                    width: width,
                     videoId: song.id
                 });
             }
