@@ -8,7 +8,6 @@ class ChatViewModel {
         this.LoggedInUsers = ko.observableArray();
         this.Messages = ko.observableArray();
         this.NewMessage = ko.observable();
-        this.IsUnloading = ko.observable();
         this.User = {
             Id: id,
             Tenant: tenant,
@@ -17,13 +16,7 @@ class ChatViewModel {
             CurrentSong: ko.observable()
         };
         $(window).bind("beforeunload", () => {
-            if (!this.IsUnloading()) {
-                player.Hub.send("logout", this.GetUserDTO()).then(() => window.close());
-                this.IsUnloading(true);
-                return false;
-            }
-            else
-                return true;
+            player.Hub.send("logout", this.GetUserDTO());
         });
         player.CurrentSet.subscribe(set => {
             this.User.CurrentSet(set);
