@@ -11,7 +11,7 @@ namespace Transformation.Run.Radio.Middle
 {
     public class SoundCloudMetaDataProvider : ISongMetadataProvider
     {
-        public Task<SongViewModel> PopulateMetadata(Song song, CancellationToken token = default(CancellationToken))
+        public Task<SongViewModel> PopulateMetadata(Song song, string requestingRegion = null, CancellationToken token = default(CancellationToken))
         {
             return Task.FromResult(new SongViewModel()
             {

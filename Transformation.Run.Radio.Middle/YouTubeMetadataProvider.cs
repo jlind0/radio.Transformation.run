@@ -18,13 +18,14 @@ namespace Transformation.Run.Radio.Middle
         {
             this.YouTube = youTube;
         }
-        public async Task<SongViewModel> PopulateMetadata(Song song, CancellationToken token = default(CancellationToken))
+        public async Task<SongViewModel> PopulateMetadata(Song song, string requestingRegion = null, CancellationToken token = default(CancellationToken))
         {
-            var request = this.YouTube.Videos.List("snippet");
+            var request = this.YouTube.Videos.List("snippet, contentDetails");
             request.Id = song.Id;
             var response = await request.ExecuteAsync(token);
             var video = response.Items.SingleOrDefault();
-            if (video != null)
+            if (video != null && 
+                !(video.ContentDetails.RegionRestriction?.Blocked?.Contains(requestingRegion) ?? false))
                 return new SongViewModel()
                 {
                     Id = video.Id,

@@ -117,7 +117,6 @@ export class PlayistPlayer{
                 this.YouTubePlayer = new YT.Player(this.element, {
                     events: {
                         onStateChange: evt => {
-                            
                             if (evt.data == YT.PlayerState.ENDED)
                                 this.PlaySet();
                         },

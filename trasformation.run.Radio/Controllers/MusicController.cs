@@ -15,6 +15,9 @@ using trasformation.run.Radio.Exstensions;
 using System.Text;
 using Transformation.Run.Radio.Core.Models;
 using Transformation.Run.Radio.Middle.Core;
+using Microsoft.AspNetCore.Hosting;
+using MaxMind.Db;
+using MaxMind.GeoIP2;
 namespace trasformation.run.Radio.Controllers
 {
     [Produces("application/json")]
@@ -25,20 +28,34 @@ namespace trasformation.run.Radio.Controllers
         protected IMusicSetMiddleware MusicMiddle { get; private set; }
         protected IMusicAdapter MusicAdapter { get; private set; }
         protected ITenantDataAdapter TenantAdapter { get; private set; }
+        protected IHostingEnvironment Hosting { get; private set; }
         public MusicController(IMusicSetMetadataProvider metaData, 
-            IMusicSetMiddleware middle, IMusicAdapter musicAdapter, ITenantDataAdapter tenant)
+            IMusicSetMiddleware middle, IMusicAdapter musicAdapter, ITenantDataAdapter tenant,
+            IHostingEnvironment hosting)
         {
             this.MusicMiddle = middle;
             this.MetaData = metaData;
             this.MusicAdapter = musicAdapter;
             this.TenantAdapter = tenant;
+            this.Hosting = hosting;
         }
 
         [HttpPost("Next/{tenant?}")]
         public async Task<MusicSetViewModel> GetNextSet([FromBody]string musicSetId = null, string tenant = "jason", CancellationToken token = default(CancellationToken))
         {
+            string country = null;
+            try
+            {
+                using (var db = new DatabaseReader(Hosting.ContentRootPath + "\\GeoLite2-Country.mmdb"))
+                {
+                    System.Net.IPAddress address = HttpContext.Connection.RemoteIpAddress.MapToIPv4();
+                    //System.Net.IPAddress.TryParse("52.176.145.32", out address);
+                    country = db.Country(address).Country.IsoCode;
+                }
+            }
+            catch { }
             MusicSet set = await this.MusicMiddle.GetNextSet(tenant, musicSetId, token);
-            return await this.MetaData.PopulateMetadata(set, token);
+            return await this.MetaData.PopulateMetadata(set, country, token);
         }
         [HttpPost]
         [Authorize()]
@@ -61,7 +78,7 @@ namespace trasformation.run.Radio.Controllers
         public async Task<MusicSetViewModel> GetSet(string setId, CancellationToken token = default(CancellationToken))
         {
             var set = await this.MusicAdapter.GetSet(setId, token);
-            return await this.MetaData.PopulateMetadata(set, token);
+            return await this.MetaData.PopulateMetadata(set, null, token);
         }
         [HttpDelete("{setId}")]
         [Authorize]

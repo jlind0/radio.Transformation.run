@@ -10,10 +10,10 @@ namespace Transformation.Run.Radio.Middle.Core
 {
     public interface ISongMetadataProvider
     { 
-        Task<SongViewModel> PopulateMetadata(Song song, CancellationToken token = default(CancellationToken));
+        Task<SongViewModel> PopulateMetadata(Song song, string requestingRegion = null, CancellationToken token = default(CancellationToken));
     }
     public interface IMusicSetMetadataProvider
     {
-        Task<MusicSetViewModel> PopulateMetadata(MusicSet set, CancellationToken token = default(CancellationToken));
+        Task<MusicSetViewModel> PopulateMetadata(MusicSet set, string requestingRegion = null, CancellationToken token = default(CancellationToken));
     }
 }

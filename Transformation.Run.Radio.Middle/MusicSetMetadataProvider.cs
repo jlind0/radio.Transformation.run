@@ -17,7 +17,7 @@ namespace Transformation.Run.Radio.Middle
         {
             this.Container = container;
         }
-        public async Task<MusicSetViewModel> PopulateMetadata(MusicSet set, CancellationToken token = default(CancellationToken))
+        public async Task<MusicSetViewModel> PopulateMetadata(MusicSet set, string requestingRegion = null, CancellationToken token = default(CancellationToken))
         {
             MusicSetViewModel msvm = new MusicSetViewModel()
             {
@@ -29,7 +29,7 @@ namespace Transformation.Run.Radio.Middle
             List<SongViewModel> svms = new List<SongViewModel>();
             foreach (var song in set.Songs)
             {
-                var svm = await this.Container.GetInstance<ISongMetadataProvider>(song.Provider).PopulateMetadata(song, token);
+                var svm = await this.Container.GetInstance<ISongMetadataProvider>(song.Provider).PopulateMetadata(song, requestingRegion, token);
                 if (svm != null)
                     svms.Add(svm);
             }
