@@ -16,6 +16,7 @@ class MusicSetViewModel {
         this.MusicSet = ko.observable();
         this.Songs = ko.observableArray();
         this.Name = ko.observable();
+        this.IsActive = ko.observable(true);
         this.IsDeleteVisisble = ko.observable(false);
         this.IsSaveEnabled = ko.observable(true);
         if (this.setId === "")
@@ -24,6 +25,7 @@ class MusicSetViewModel {
         this.MusicSet.subscribe(set => {
             this.IsDeleteVisisble(set.id != null);
             this.IsSaveEnabled(true);
+            this.IsActive(set.isActive);
             this.Songs.removeAll();
             set.songs.ForEach(song => {
                 var s = {
@@ -43,7 +45,8 @@ class MusicSetViewModel {
                 id: null,
                 name: "Enter a Set Name Here",
                 songs: [],
-                tenant: tenantId
+                tenant: tenantId,
+                isActive: true
             });
         }
     }
@@ -82,7 +85,8 @@ class MusicSetViewModel {
                 name: null,
                 skip: s.Skip(),
                 take: s.Take()
-            }))
+            })),
+            isActive: this.IsActive()
         };
         $.ajax({
             url: '/api/music/',

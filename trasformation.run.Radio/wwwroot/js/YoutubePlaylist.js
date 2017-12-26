@@ -44,7 +44,8 @@ class PlayistPlayer {
                     name: set.name,
                     songs: set.songs,
                     tenant: set.tenant,
-                    playedSongs: ko.observableArray()
+                    playedSongs: ko.observableArray(),
+                    isActive: set.isActive
                 });
         });
         this.Hub.on("getConnectionId", id => this.ChatRoom(new ChatRoomViewModel_1.ChatViewModel(this, id)));
@@ -74,7 +75,8 @@ class PlayistPlayer {
                     name: set.name,
                     songs: set.songs,
                     tenant: tenant,
-                    playedSongs: ko.observableArray()
+                    playedSongs: ko.observableArray(),
+                    isActive: set.isActive
                 };
                 if (push)
                     this.Hub.send("queueSet", set);

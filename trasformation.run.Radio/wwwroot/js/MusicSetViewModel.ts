@@ -24,6 +24,7 @@ export class MusicSetViewModel {
     public MusicSet: KnockoutObservable<MusicSet> = ko.observable();
     public Songs: KnockoutObservableArray<SongViewModel> = ko.observableArray();
     public Name: KnockoutObservable<string> = ko.observable();
+    public IsActive: KnockoutObservable<boolean> = ko.observable(true);
     public IsDeleteVisisble: KnockoutObservable<boolean> = ko.observable(false);
     public IsSaveEnabled: KnockoutObservable<boolean> = ko.observable(true);
     constructor(protected tenantId : string, protected setId?: string) {
@@ -33,6 +34,7 @@ export class MusicSetViewModel {
         this.MusicSet.subscribe(set => {
             this.IsDeleteVisisble(set.id != null);
             this.IsSaveEnabled(true);
+            this.IsActive(set.isActive);
             this.Songs.removeAll();
             set.songs.ForEach(song => {
                 var s: SongViewModel = {
@@ -52,7 +54,8 @@ export class MusicSetViewModel {
                 id: null,
                 name: "Enter a Set Name Here",
                 songs: [],
-                tenant: tenantId
+                tenant: tenantId,
+                isActive: true
             })
         }
     }
@@ -91,7 +94,8 @@ export class MusicSetViewModel {
                 name: null,
                 skip: s.Skip(),
                 take: s.Take()
-            })
+            }),
+            isActive: this.IsActive()
         }
         $.ajax(<JQuery.AjaxSettings<any>>{
             url: '/api/music/',

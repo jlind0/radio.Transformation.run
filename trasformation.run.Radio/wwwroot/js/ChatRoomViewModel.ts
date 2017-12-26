@@ -76,7 +76,8 @@ export class ChatViewModel {
                         name: m.name,
                         playedSongs: null,
                         songs: [],
-                        tenant: m.tenant
+                        tenant: m.tenant,
+                        isActive: m.isActive
                     }),
                     CurrentSong: ko.observable({
                         id: s.id,
@@ -93,7 +94,8 @@ export class ChatViewModel {
                     name: m.name,
                     playedSongs: null,
                     songs: [],
-                    tenant: m.tenant
+                    tenant: m.tenant,
+                    isActive: m.isActive
                 });
                 uvm.CurrentSong({
                     id: s.id,
@@ -114,7 +116,8 @@ export class ChatViewModel {
                 name: "",
                 playedSongs: ko.observableArray(),
                 songs: [],
-                tenant: u.tenant
+                tenant: u.tenant,
+                isActive: true
             };
             if (u.id == id) {
                 ss = player.CurrentSet();
@@ -164,7 +167,8 @@ export class ChatViewModel {
             id: this.User.CurrentSet().id,
             name: this.User.CurrentSet().name,
             songs: [],
-            tenant: this.User.CurrentSet().tenant
+            tenant: this.User.CurrentSet().tenant,
+            isActive: this.User.CurrentSet().isActive
         };
     }
     protected GetCurrentSong(): Song {

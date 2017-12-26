@@ -4,10 +4,12 @@
 }
 <div id="MusicSetView">
     <div class="form-group">
-        <label for="txtName">Name</label>
-        <input id="txtName" class="form-control" data-bind="textInput: Name" />
+        <label>Name</label>
+        <input class="form-control" data-bind="textInput: Name" />
+        <label>Active</label>
+        <input type="checkbox" data-bind="checked:IsActive"/>
     </div>
-    <a href="" class="btn" data-bind="click:AddSongSlot">Add Song</a>
+
     <div data-bind="foreach: Songs">
         <div class="form-group">
             <label>Provider</label>
@@ -24,6 +26,7 @@
             <a href="" class="btn" data-bind="click:$parent.RemoveSong">x</a>
         </div>
     </div>
+    <a href="" class="btn" data-bind="click:AddSongSlot">Add Song</a>
     <a href="" class="btn" data-bind="click:SaveSet, visible:IsSaveEnabled">Save</a>
     <a href="" class="btn" data-bind="click:DeleteSet, visible:IsDeleteVisisble">Delete</a>
 </div>

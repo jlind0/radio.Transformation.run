@@ -23,7 +23,8 @@ namespace Transformation.Run.Radio.Middle
             {
                 id = set.id,
                 Name = set.Name,
-                Tenant = set.Tenant
+                Tenant = set.Tenant,
+                IsActive = set.IsActive
             };
             List<SongViewModel> svms = new List<SongViewModel>();
             foreach (var song in set.Songs)

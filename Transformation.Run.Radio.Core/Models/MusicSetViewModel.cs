@@ -11,6 +11,7 @@ namespace Transformation.Run.Radio.Core.Models
         public string Name { get; set; }
         public SongViewModel[] Songs { get; set; }
         public string Tenant { get; set; }
+        public bool IsActive { get; set; }
     }
     public class SongViewModel
     {

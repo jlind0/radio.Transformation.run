@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 ///<reference path="youtube.d.ts"/>
 ///<reference path="linq4js.ts"/>
 ///<reference path="knockout.ts"/>
-//const signalR = require("../lib/signalr/index");
-//const ChatRoomViewModel_1 = require("./ChatRoomViewModel");
 function onYouTubeIframeAPIReady() {
     var player = new PlayistPlayer($("#player").get(0));
     ko.applyBindings(player, $("#PlayerView").get(0));
@@ -44,7 +42,8 @@ class PlayistPlayer {
                     name: set.name,
                     songs: set.songs,
                     tenant: set.tenant,
-                    playedSongs: ko.observableArray()
+                    playedSongs: ko.observableArray(),
+                    isActive: set.isActive
                 });
         });
         this.Hub.on("getConnectionId", id => this.ChatRoom(new ChatViewModel(this, id)));
@@ -74,7 +73,8 @@ class PlayistPlayer {
                     name: set.name,
                     songs: set.songs,
                     tenant: tenant,
-                    playedSongs: ko.observableArray()
+                    playedSongs: ko.observableArray(),
+                    isActive: set.isActive
                 };
                 if (push)
                     this.Hub.send("queueSet", set);
