@@ -14,6 +14,7 @@ namespace Transformation.Run.Radio.Data.Core
         Task SaveMusicSet(MusicSet set, CancellationToken token = default(CancellationToken));
         Task<MusicSet> GetSet(string id, CancellationToken token = default(CancellationToken));
         Task<IEnumerable<MusicSet>> GetMusicSets(string tenantId, CancellationToken token = default(CancellationToken));
+        Task DeleteSet(string id, CancellationToken token = default(CancellationToken));
     }
 
     public class CosmosDataToken

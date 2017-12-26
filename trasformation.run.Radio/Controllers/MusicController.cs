@@ -63,5 +63,16 @@ namespace trasformation.run.Radio.Controllers
             var set = await this.MusicAdapter.GetSet(setId, token);
             return await this.MetaData.PopulateMetadata(set, token);
         }
+        [HttpDelete("{setId}")]
+        [Authorize]
+        public async Task DeleteSet(string setId, CancellationToken token = default(CancellationToken))
+        {
+            var set = await this.MusicAdapter.GetSet(setId, token);
+            if (this.User.HasClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", $"tenant:{set.Tenant}"))
+            {
+                await this.MusicMiddle.DeleteSet(set, token);
+            }
+            else throw new InvalidOperationException("User not authorized for tenant");
+        }
     }
 }

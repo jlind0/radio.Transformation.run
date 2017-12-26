@@ -16,9 +16,14 @@ class MusicSetViewModel {
         this.MusicSet = ko.observable();
         this.Songs = ko.observableArray();
         this.Name = ko.observable();
+        this.IsDeleteVisisble = ko.observable(false);
+        this.IsSaveEnabled = ko.observable(true);
         if (this.setId === "")
             this.setId = null;
+        this.RemoveSong = this.RemoveSong.bind(this);
         this.MusicSet.subscribe(set => {
+            this.IsDeleteVisisble(set.id != null);
+            this.IsSaveEnabled(true);
             this.Songs.removeAll();
             set.songs.ForEach(song => {
                 var s = {
@@ -42,6 +47,9 @@ class MusicSetViewModel {
             });
         }
     }
+    RemoveSong(song) {
+        this.Songs.remove(song);
+    }
     AddSongSlot() {
         this.Songs.push({
             Id: ko.observable(),
@@ -50,7 +58,20 @@ class MusicSetViewModel {
             Take: ko.observable()
         });
     }
+    DeleteSet() {
+        this.IsSaveEnabled(false);
+        $.ajax({
+            url: '/api/music/' + this.MusicSet().id,
+            type: "DELETE",
+            dataType: "json",
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            }
+        }).then(() => alert("Set Deleted"));
+    }
     SaveSet() {
+        this.IsSaveEnabled(false);
         var musicSet = {
             id: this.MusicSet().id,
             name: this.Name(),

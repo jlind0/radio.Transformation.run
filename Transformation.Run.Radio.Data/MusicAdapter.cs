@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Linq;
 namespace Transformation.Run.Radio.Data
 {
@@ -15,6 +16,18 @@ namespace Transformation.Run.Radio.Data
         public MusicAdapter(CosmosDataToken token) : base(token)
         {
         }
+
+        public Task DeleteSet(string id, CancellationToken token = default(CancellationToken))
+        {
+            return UseClient(async client =>
+            {
+                var query = CreateQuery<MusicSet>(client, new FeedOptions() { MaxItemCount = 1 }).Where(m => m.id == id).AsDocumentQuery();
+                var document = (await query.ExecuteNextAsync<Document>(token)).SingleOrDefault();
+
+                await client.DeleteDocumentAsync(document.SelfLink);
+            });
+        }
+
         public async Task<IEnumerable<MusicSet>> GetMusicSets(string tenantId, CancellationToken token = default(CancellationToken))
         {
             List<MusicSet> sets = new List<MusicSet>();

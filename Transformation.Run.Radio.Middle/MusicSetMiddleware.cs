@@ -61,5 +61,13 @@ namespace Transformation.Run.Radio.Middle
             }
             return set;
         }
+
+        public async Task DeleteSet(MusicSet set, CancellationToken token = default(CancellationToken))
+        {
+            await this.MusicAdapter.DeleteSet(set.id, token);
+            var tenant = await this.TenantAdapter.GetTenant(set.Tenant, token);
+            tenant.SetCount--;
+            await this.TenantAdapter.SaveTenant(tenant, token);
+        }
     }
 }

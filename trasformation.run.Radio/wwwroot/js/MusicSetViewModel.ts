@@ -24,11 +24,15 @@ export class MusicSetViewModel {
     public MusicSet: KnockoutObservable<MusicSet> = ko.observable();
     public Songs: KnockoutObservableArray<SongViewModel> = ko.observableArray();
     public Name: KnockoutObservable<string> = ko.observable();
+    public IsDeleteVisisble: KnockoutObservable<boolean> = ko.observable(false);
+    public IsSaveEnabled: KnockoutObservable<boolean> = ko.observable(true);
     constructor(protected tenantId : string, protected setId?: string) {
         if (this.setId === "")
             this.setId = null;
+        this.RemoveSong = <(song: SongViewModel) => void>this.RemoveSong.bind(this);
         this.MusicSet.subscribe(set => {
-            
+            this.IsDeleteVisisble(set.id != null);
+            this.IsSaveEnabled(true);
             this.Songs.removeAll();
             set.songs.ForEach(song => {
                 var s: SongViewModel = {
@@ -52,6 +56,9 @@ export class MusicSetViewModel {
             })
         }
     }
+    public RemoveSong(song: SongViewModel) {
+        this.Songs.remove(song);
+    }
     public AddSongSlot(): void {
         this.Songs.push({
             Id: ko.observable(),
@@ -60,7 +67,20 @@ export class MusicSetViewModel {
             Take: ko.observable()
         })
     }
+    public DeleteSet(): void {
+        this.IsSaveEnabled(false);
+        $.ajax(<JQuery.AjaxSettings<any>>{
+            url: '/api/music/' + this.MusicSet().id,
+            type: "DELETE",
+            dataType: "json",
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            }
+        }).then(() => alert("Set Deleted"));
+    }
     public SaveSet(): void{
+        this.IsSaveEnabled(false);
         var musicSet: MusicSet = {
             id: this.MusicSet().id,
             name: this.Name(),
