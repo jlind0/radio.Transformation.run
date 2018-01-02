@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+///<reference path="jquery.ts"/>
+///<reference path="youtube.d.ts"/>
+///<reference path="linq4js.ts"/>
+///<reference path="knockout.ts"/>
+const YoutubePlaylist_1 = require("./YoutubePlaylist");
 $(() => {
     var vm = new MusicSetViewModel(tenantId, setId);
     ko.applyBindings(vm, $("#MusicSetView").get(0));
 });
-var Providers;
-(function (Providers) {
-    Providers["youTube"] = "youTube";
-    Providers["soundCloud"] = "soundCloud";
-})(Providers = exports.Providers || (exports.Providers = {}));
 class MusicSetViewModel {
     constructor(tenantId, setId) {
         this.tenantId = tenantId;
@@ -32,7 +32,7 @@ class MusicSetViewModel {
                     Id: ko.observable(song.id),
                     Skip: ko.observable(song.skip),
                     Take: ko.observable(song.take),
-                    Provider: ko.observable(Providers[song.provider])
+                    Provider: ko.observable(YoutubePlaylist_1.Providers[song.provider])
                 };
                 this.Songs.push(s);
             });
@@ -56,7 +56,7 @@ class MusicSetViewModel {
     AddSongSlot() {
         this.Songs.push({
             Id: ko.observable(),
-            Provider: ko.observable(Providers.youTube),
+            Provider: ko.observable(YoutubePlaylist_1.Providers.youTube),
             Skip: ko.observable(),
             Take: ko.observable()
         });

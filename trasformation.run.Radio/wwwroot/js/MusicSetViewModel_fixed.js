@@ -1,45 +1,34 @@
-﻿///<reference path="jquery.ts"/>
-///<reference path="youtube.d.ts"/>
-///<reference path="linq4js.ts"/>
-///<reference path="knockout.ts"/>
-import { MusicSet, Song, Providers } from "./YoutubePlaylist";
-declare var setId: string;
-declare var tenantId: string;
+﻿
+Object.defineProperty(exports, "__esModule", { value: true });
 $(() => {
     var vm = new MusicSetViewModel(tenantId, setId);
     ko.applyBindings(vm, $("#MusicSetView").get(0));
-    
 });
-
-export interface SongViewModel {
-    Id: KnockoutObservable<string>;
-    Skip: KnockoutObservable<number>;
-    Take: KnockoutObservable<number>;
-    Provider: KnockoutObservable<Providers>;
-}
-export class MusicSetViewModel {
-    public MusicSet: KnockoutObservable<MusicSet> = ko.observable();
-    public Songs: KnockoutObservableArray<SongViewModel> = ko.observableArray();
-    public Name: KnockoutObservable<string> = ko.observable();
-    public IsActive: KnockoutObservable<boolean> = ko.observable(true);
-    public IsDeleteVisisble: KnockoutObservable<boolean> = ko.observable(false);
-    public IsSaveEnabled: KnockoutObservable<boolean> = ko.observable(true);
-    constructor(protected tenantId : string, protected setId?: string) {
+class MusicSetViewModel {
+    constructor(tenantId, setId) {
+        this.tenantId = tenantId;
+        this.setId = setId;
+        this.MusicSet = ko.observable();
+        this.Songs = ko.observableArray();
+        this.Name = ko.observable();
+        this.IsActive = ko.observable(true);
+        this.IsDeleteVisisble = ko.observable(false);
+        this.IsSaveEnabled = ko.observable(true);
         if (this.setId === "")
             this.setId = null;
-        this.RemoveSong = <(song: SongViewModel) => void>this.RemoveSong.bind(this);
+        this.RemoveSong = this.RemoveSong.bind(this);
         this.MusicSet.subscribe(set => {
             this.IsDeleteVisisble(set.id != null);
             this.IsSaveEnabled(true);
             this.IsActive(set.isActive);
             this.Songs.removeAll();
             set.songs.ForEach(song => {
-                var s: SongViewModel = {
+                var s = {
                     Id: ko.observable(song.id),
                     Skip: ko.observable(song.skip),
                     Take: ko.observable(song.take),
                     Provider: ko.observable(Providers[song.provider])
-                }
+                };
                 this.Songs.push(s);
             });
             this.Name(set.name);
@@ -53,23 +42,23 @@ export class MusicSetViewModel {
                 songs: [],
                 tenant: tenantId,
                 isActive: true
-            })
+            });
         }
     }
-    public RemoveSong(song: SongViewModel) {
+    RemoveSong(song) {
         this.Songs.remove(song);
     }
-    public AddSongSlot(): void {
+    AddSongSlot() {
         this.Songs.push({
             Id: ko.observable(),
             Provider: ko.observable(Providers.youTube),
             Skip: ko.observable(),
             Take: ko.observable()
-        })
+        });
     }
-    public DeleteSet(): void {
+    DeleteSet() {
         this.IsSaveEnabled(false);
-        $.ajax(<JQuery.AjaxSettings<any>>{
+        $.ajax({
             url: '/api/music/' + this.MusicSet().id,
             type: "DELETE",
             dataType: "json",
@@ -79,22 +68,22 @@ export class MusicSetViewModel {
             }
         }).then(() => alert("Set Deleted"));
     }
-    public SaveSet(): void{
+    SaveSet() {
         this.IsSaveEnabled(false);
-        var musicSet: MusicSet = {
+        var musicSet = {
             id: this.MusicSet().id,
             name: this.Name(),
             tenant: this.MusicSet().tenant,
-            songs: this.Songs().Select(s => <Song>{
+            songs: this.Songs().Select(s => ({
                 id: s.Id(),
                 provider: s.Provider(),
                 name: null,
                 skip: s.Skip(),
                 take: s.Take()
-            }),
+            })),
             isActive: this.IsActive()
-        }
-        $.ajax(<JQuery.AjaxSettings<any>>{
+        };
+        $.ajax({
             url: '/api/music/',
             type: "POST",
             dataType: "json",
@@ -105,8 +94,8 @@ export class MusicSetViewModel {
             data: JSON.stringify(musicSet)
         }).then(() => alert("Set saved"));
     }
-    public LoadSet(): void{
-        $.ajax(<JQuery.AjaxSettings<any>>{
+    LoadSet() {
+        $.ajax({
             url: '/api/music/' + this.setId,
             type: "GET",
             dataType: "json",
@@ -117,3 +106,4 @@ export class MusicSetViewModel {
         }).then(set => this.MusicSet(set));
     }
 }
+exports.MusicSetViewModel = MusicSetViewModel;

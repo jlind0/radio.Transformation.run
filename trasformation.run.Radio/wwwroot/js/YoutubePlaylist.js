@@ -13,6 +13,12 @@ function onYouTubeIframeAPIReady() {
     ko.applyBindings(player, $("#PlayerView").get(0));
 }
 exports.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+var Providers;
+(function (Providers) {
+    Providers["youTube"] = "youTube";
+    Providers["soundCloud"] = "soundCloud";
+    Providers["vimeo"] = "vimeo";
+})(Providers = exports.Providers || (exports.Providers = {}));
 class PlayistPlayer {
     constructor(element) {
         this.element = element;
@@ -20,9 +26,11 @@ class PlayistPlayer {
         this.SetList = ko.observableArray();
         this.SetQueue = ko.observableArray();
         this.ChatRoom = ko.observable();
-        this.IsYouTube = ko.observable(true);
+        this.Provider = ko.observable(Providers.youTube);
         this.AspectRatio = 390.0 / 640.0;
-        this.IsNotYouTube = ko.computed(() => !this.IsYouTube());
+        this.IsSoundCloud = ko.computed(() => this.Provider() == Providers.soundCloud);
+        this.IsVimeo = ko.computed(() => this.Provider() == Providers.vimeo);
+        this.IsYouTube = ko.computed(() => this.Provider() == Providers.youTube);
         this.CurrentSet.subscribe(set => {
             if (this.SetList().length > 2)
                 this.SetList.shift();
@@ -114,7 +122,7 @@ class PlayistPlayer {
                     this.YouTubePlayer.destroy();
                     this.YouTubePlayer = null;
                 }
-                this.IsYouTube(true);
+                this.Provider(Providers.youTube);
                 this.YouTubePlayer = new YT.Player(this.element, {
                     events: {
                         onStateChange: evt => {
@@ -138,7 +146,7 @@ class PlayistPlayer {
                 });
             }
             else if (song.provider === "soundCloud") {
-                this.IsYouTube(false);
+                this.Provider(Providers.soundCloud);
                 this.SoundCloudSong = song;
                 var widget = SC.Widget("sc-widget");
                 widget.load(song.id, {
@@ -146,6 +154,40 @@ class PlayistPlayer {
                     show_artwork: true
                 });
                 widget.play();
+            }
+            else if (song.provider == "vimeo") {
+                this.Provider(Providers.vimeo);
+                var options = {
+                    id: song.id,
+                    width: width,
+                    loop: false
+                };
+                if (this.VimeoPlayer == null)
+                    this.VimeoPlayer = new Vimeo.Player('vimeo-player', options);
+                else
+                    this.VimeoPlayer.loadVideo(song.id);
+                var player = this.VimeoPlayer;
+                var songPushed = false;
+                player.on("play", data => {
+                    player.getVideoTitle().then(title => {
+                        if (!songPushed) {
+                            song.name = title;
+                            set.playedSongs.push(song);
+                            songPushed = true;
+                        }
+                    }).catch(ex => console.error(ex));
+                });
+                var nextSetPlayed = false;
+                player.on("ended", data => {
+                    if (!nextSetPlayed) {
+                        player.unload();
+                        this.PlaySet();
+                        nextSetPlayed = true;
+                    }
+                });
+                player.on("loaded", data => {
+                    player.play();
+                });
             }
         }
         else

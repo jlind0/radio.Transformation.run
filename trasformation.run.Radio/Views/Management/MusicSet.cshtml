@@ -16,6 +16,7 @@
             <select data-bind="value: Provider">
                 <option value="youTube">You Tube</option>
                 <option value="soundCloud">Sound Cloud</option>
+                <option value="vimeo">Vimeo</option>
             </select>
             <label>Id</label>
             <input type="text" data-bind="textInput: Id" />
@@ -35,6 +36,7 @@
         var setId = '@Model.SetId';
         var tenantId = '@Model.TenantId';
     </script>
-    <script type="text/javascript" src="~/js/MusicSetViewModel.js"></script>
+    <script type="text/javascript" src="~/js/YoutubePlaylist_fixed.js"></script>
+    <script type="text/javascript" src="~/js/MusicSetViewModel_fixed.js"></script>
 }
 

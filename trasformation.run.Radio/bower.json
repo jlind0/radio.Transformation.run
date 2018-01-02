@@ -6,6 +6,7 @@
     "knockout": "v3.4.2",
     "commonjs-require": "v1.4.5",
     "dojo": "1.13.0",
-    "system.js": "0.20.19"
+    "system.js": "0.20.19",
+    "vimeo-player-js": "v2.2.1"
   }
 }
